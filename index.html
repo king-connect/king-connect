@@ -11,37 +11,52 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
         body { background-color: #fff; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* HEADER FIXO NO TOPO */
+        /* HEADER */
         .header-main { background: #000; color: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
         .header-main h1 { font-size: 24px; font-weight: bold; }
-        .icon-user { width: 32px; height: 32px; cursor: pointer; filter: invert(1); }
+        .icon-top { width: 30px; height: 30px; cursor: pointer; filter: invert(1); }
 
-        /* ÁREA DE CONTEÚDO DINÂMICO */
+        /* CONTEÚDO HOME */
         #main-content { flex: 1; overflow-y: auto; padding-bottom: 90px; position: relative; }
         .empty-state { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 40px; text-align: center; }
         .empty-text { font-size: 22px; font-weight: 800; color: #000; text-transform: uppercase; }
 
         /* LISTA DE CONVERSAS */
         .chat-item { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; }
-        .chat-item img { width: 50px; height: 50px; border-radius: 50%; background: #eee; margin-right: 15px; object-fit: cover; }
+        .chat-item img { width: 55px; height: 55px; border-radius: 50%; background: #eee; margin-right: 15px; object-fit: cover; }
         .chat-info h4 { font-size: 18px; color: #000; }
+        .chat-info p { font-size: 13px; color: #666; }
 
-        /* BOTÃO + FLUTUANTE ACIMA DO MENU */
-        .btn-add-chat { position: fixed; bottom: 100px; right: 25px; font-size: 45px; font-weight: bold; color: #000; cursor: pointer; z-index: 5; text-decoration: none; }
+        /* BOTÃO + */
+        .btn-add-chat { position: fixed; bottom: 100px; right: 25px; font-size: 45px; font-weight: bold; color: #000; cursor: pointer; z-index: 5; }
 
-        /* NAV BAR FIXA NO RODAPÉ (CORRIGIDO) */
+        /* NAV BAR FIXA */
         .nav-bar { background: #000; height: 80px; display: flex; justify-content: space-around; align-items: center; width: 100%; position: fixed; bottom: 0; left: 0; z-index: 10; }
         .nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; color: white; text-decoration: none; }
-        .nav-item img { width: 28px; filter: invert(1); }
+        .nav-item img { width: 32px; filter: invert(1); }
         .nav-item span { font-size: 11px; font-weight: bold; }
 
         /* MODAIS */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 20px; }
-        .input-king { width: 100%; max-width: 300px; padding: 15px; border-radius: 25px; border: none; margin-bottom: 10px; text-align: center; font-weight: bold; }
+        .input-king { width: 100%; max-width: 300px; padding: 15px; border-radius: 25px; border: none; margin-bottom: 10px; text-align: center; font-weight: bold; outline: none; }
         .btn-king { background: #fff; color: #000; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 100%; max-width: 300px; margin-top: 10px; }
 
-        /* PERFIL */
-        .profile-img-edit { width: 120px; height: 120px; border-radius: 50%; border: 3px solid #fff; margin-bottom: 15px; cursor: pointer; object-fit: cover; }
+        /* TELA DE CHAT */
+        #chat-screen { position: fixed; inset: 0; background: #fff; display: none; flex-direction: column; z-index: 2000; }
+        .chat-header { background: #000; color: #fff; padding: 15px; display: flex; align-items: center; justify-content: space-between; }
+        .chat-user-info { display: flex; align-items: center; gap: 12px; }
+        .chat-avatar-topo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: #eee; }
+        
+        #chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #fff; }
+        .msg-bubble { padding: 10px 15px; border-radius: 18px; max-width: 80%; font-weight: bold; word-wrap: break-word; font-size: 15px; }
+        .msg-me { align-self: flex-end; background: #a349a4; color: #fff; border-bottom-right-radius: 2px; }
+        .msg-them { align-self: flex-start; background: #eee; color: #000; border-bottom-left-radius: 2px; }
+
+        .chat-footer { background: #000; padding: 12px; display: flex; align-items: center; gap: 10px; }
+        .input-chat { flex: 1; padding: 12px 20px; border-radius: 25px; border: none; outline: none; font-weight: bold; }
+        .icon-footer { width: 28px; filter: invert(1); cursor: pointer; }
+
+        .profile-img-edit { width: 120px; height: 120px; border-radius: 50%; border: 3px solid #fff; margin-bottom: 15px; object-fit: cover; }
     </style>
 </head>
 <body>
@@ -55,7 +70,7 @@
     </div>
 
     <div id="perfil-modal" class="modal-overlay">
-        <img id="edit-foto-preview" class="profile-img-edit" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" onclick="alterarFoto()">
+        <img id="edit-foto-preview" class="profile-img-edit" src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" onclick="alterarFoto()">
         <input type="text" id="edit-nome" class="input-king" placeholder="Nome Exibido">
         <input type="text" id="edit-bio" class="input-king" placeholder="Sua Biografia">
         <button class="btn-king" style="background:#a349a4; color:#fff;" onclick="salvarPerfil()">SALVAR ALTERAÇÕES</button>
@@ -63,9 +78,25 @@
         <button class="btn-king" style="color:red;" onclick="logout()">DESLOGAR</button>
     </div>
 
+    <div id="chat-screen">
+        <div class="chat-header">
+            <div class="chat-user-info">
+                <span onclick="fecharChat()" style="font-size: 25px; cursor:pointer; padding-right:5px;">❮</span>
+                <img id="chat-foto-topo" class="chat-avatar-topo" src="">
+                <h3 id="chat-nome-topo">Nome</h3>
+            </div>
+            <img src="https://cdn-icons-png.flaticon.com/512/15/15874.png" class="icon-footer" style="width:25px;">
+        </div>
+        <div id="chat-messages"></div>
+        <div class="chat-footer">
+            <input type="text" id="msg-input" class="input-chat" placeholder="ESCREVA AQUI!">
+            <img src="https://cdn-icons-png.flaticon.com/512/25/25665.png" class="icon-footer">
+        </div>
+    </div>
+
     <header class="header-main">
         <h1>KINGConnect</h1>
-        <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="icon-user" onclick="abrirEdicaoPerfil()">
+        <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" class="icon-top" onclick="abrirEdicaoPerfil()">
     </header>
 
     <div id="main-content">
@@ -101,6 +132,7 @@
 
         let currentUser = JSON.parse(localStorage.getItem('king_user'));
         let modoRegistro = false;
+        let chatAtivoId = null;
 
         if(currentUser) {
             document.getElementById('login-modal').style.display = 'none';
@@ -123,7 +155,7 @@
 
             if(modoRegistro) {
                 if(snap.exists()) return alert("Usuário já existe!");
-                const data = { id, nome: user, pass, bio: "Disponível", foto: "https://cdn-icons-png.flaticon.com/512/149/149071.png" };
+                const data = { id, nome: user, pass, bio: "Disponível", foto: "https://cdn-icons-png.flaticon.com/512/1144/1144760.png" };
                 await ref.set(data);
                 loginLocal(data);
             } else {
@@ -139,11 +171,10 @@
 
         function logout() { localStorage.clear(); location.reload(); }
 
-        // EDITAR PERFIL
         function abrirEdicaoPerfil() {
             document.getElementById('edit-nome').value = currentUser.nome;
             document.getElementById('edit-bio').value = currentUser.bio;
-            document.getElementById('edit-foto-preview').src = currentUser.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+            document.getElementById('edit-foto-preview').src = currentUser.foto || 'https://cdn-icons-png.flaticon.com/512/1144/1144760.png';
             document.getElementById('perfil-modal').style.display = 'flex';
         }
 
@@ -153,32 +184,29 @@
         }
 
         async function salvarPerfil() {
-            const novoNome = document.getElementById('edit-nome').value;
-            const novaBio = document.getElementById('edit-bio').value;
-            const novaFoto = document.getElementById('edit-foto-preview').src;
-
-            const updates = { nome: novoNome, bio: novaBio, foto: novaFoto };
+            const updates = { 
+                nome: document.getElementById('edit-nome').value, 
+                bio: document.getElementById('edit-bio').value, 
+                foto: document.getElementById('edit-foto-preview').src 
+            };
             await fb.ref('users/' + currentUser.id).update(updates);
-            
             currentUser = {...currentUser, ...updates};
             localStorage.setItem('king_user', JSON.stringify(currentUser));
             alert("Perfil Atualizado!");
-            document.getElementById('perfil-modal').style.display = 'none';
+            location.reload();
         }
 
-        // BUSCAR E INICIAR CONVERSA
         async function buscarUsuario() {
             const busca = prompt("Nome do usuário:");
             if(!busca) return;
             const idBusca = busca.toLowerCase().replace(/[.#$[\]]/g, "_");
-            
+            if(idBusca === currentUser.id) return alert("Você não pode conversar consigo mesmo!");
+
             const snap = await fb.ref('users/' + idBusca).once('value');
             if(snap.exists()) {
                 const alvo = snap.val();
-                // Salva que existe uma conversa entre vocês
                 await fb.ref(`conversas/${currentUser.id}/${idBusca}`).set({ nome: alvo.nome, foto: alvo.foto });
                 await fb.ref(`conversas/${idBusca}/${currentUser.id}`).set({ nome: currentUser.nome, foto: currentUser.foto });
-                carregarMinhasConversas();
             } else {
                 alert("Usuário não existe!");
             }
@@ -187,25 +215,69 @@
         function carregarMinhasConversas() {
             fb.ref(`conversas/${currentUser.id}`).on('value', snap => {
                 const lista = document.getElementById('chats-lista');
-                const empty = document.getElementById('empty-msg');
                 lista.innerHTML = "";
-                
-                if(snap.exists()) {
-                    empty.style.display = "none";
+                if(snap.exists()){
+                    document.getElementById('empty-msg').style.display = "none";
                     snap.forEach(child => {
                         const c = child.val();
-                        lista.innerHTML += `
-                            <div class="chat-item">
-                                <img src="${c.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}">
-                                <div class="chat-info"><h4>${c.nome}</h4><p>Toque para conversar</p></div>
-                            </div>
+                        const item = document.createElement('div');
+                        item.className = 'chat-item';
+                        item.onclick = () => abrirChat(child.key, c.nome, c.foto);
+                        item.innerHTML = `
+                            <img src="${c.foto || 'https://cdn-icons-png.flaticon.com/512/1144/1144760.png'}">
+                            <div class="chat-info"><h4>${c.nome}</h4><p>Toque para conversar</p></div>
                         `;
+                        lista.appendChild(item);
                     });
-                } else {
-                    empty.style.display = "flex";
                 }
             });
         }
+
+        function abrirChat(id, nome, foto) {
+            chatAtivoId = id;
+            document.getElementById('chat-nome-topo').innerText = nome;
+            document.getElementById('chat-foto-topo').src = foto || 'https://cdn-icons-png.flaticon.com/512/1144/1144760.png';
+            document.getElementById('chat-screen').style.display = 'flex';
+            ouvirMensagens(id);
+        }
+
+        function fecharChat() {
+            document.getElementById('chat-screen').style.display = 'none';
+            chatAtivoId = null;
+        }
+
+        function ouvirMensagens(alvoId) {
+            const chatID = [currentUser.id, alvoId].sort().join("_");
+            fb.ref(`mensagens/${chatID}`).off();
+            fb.ref(`mensagens/${chatID}`).on('value', snap => {
+                const box = document.getElementById('chat-messages');
+                box.innerHTML = "";
+                snap.forEach(m => {
+                    const msg = m.val();
+                    const classe = msg.sender === currentUser.id ? 'msg-me' : 'msg-them';
+                    box.innerHTML += `<div class="msg-bubble ${classe}">${msg.texto}</div>`;
+                });
+                box.scrollTop = box.scrollHeight;
+            });
+        }
+
+        async function enviarMensagem() {
+            const input = document.getElementById('msg-input');
+            const txt = input.value.trim();
+            if(!txt || !chatAtivoId) return;
+
+            const chatID = [currentUser.id, chatAtivoId].sort().join("_");
+            await fb.ref(`mensagens/${chatID}`).push({
+                texto: txt,
+                sender: currentUser.id,
+                timestamp: Date.now()
+            });
+            input.value = "";
+        }
+
+        document.getElementById('msg-input').addEventListener('keypress', e => {
+            if(e.key === 'Enter') enviarMensagem();
+        });
     </script>
 </body>
 </html>
