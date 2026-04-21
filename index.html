@@ -4,75 +4,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KINGConnect PRO</title>
-    
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
-        body { background-color: #000; color: #fff; height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .caixa { background: #111; padding: 30px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center; border: 1px solid #333; }
-        input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 25px; border: none; text-align: center; font-weight: bold; }
-        .btn-fim { width: 100%; padding: 15px; border-radius: 25px; border: none; background: #fff; color: #000; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        #sucesso { display: none; position: fixed; inset: 0; background: #000; flex-direction: column; align-items: center; justify-content: center; z-index: 10; }
+        body { background-color: #000; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; gap: 15px; }
+        .input-login { width: 80%; max-width: 300px; padding: 15px; border-radius: 25px; border: none; outline: none; font-weight: bold; text-align: center; color: #000; background: #fff; }
+        .btn-login { background: #fff; color: #000; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 16px; width: 80%; max-width: 300px; }
+        .btn-create { background: #a349a4; color: #fff; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 16px; width: 80%; max-width: 300px; }
+        #success-screen { display: none; text-align: center; z-index: 2000; }
     </style>
 </head>
 <body>
 
-    <div class="caixa" id="tela-cadastro">
-        <h2 style="margin-bottom: 20px;">NOVA CONTA</h2>
-        <input type="text" id="user" placeholder="Nome de Usuário">
-        <input type="password" id="pass" placeholder="Sua Senha">
-        <button class="btn-fim" onclick="salvarNoFirebase()">FINALIZAR CADASTRO</button>
+    <div id="login-modal" class="modal-overlay">
+        <h2 id="auth-title">NOVA CONTA</h2>
+        <input type="text" id="auth-user" class="input-login" placeholder="Nome de Usuário">
+        <input type="password" id="auth-pass" class="input-login" placeholder="Senha">
+        <input type="text" id="reg-foto" class="input-login" placeholder="Link da Foto (Opcional)">
+        
+        <button class="btn-login" onclick="executarAuth()">FINALIZAR CADASTRO</button>
+        <button class="btn-create" onclick="window.location.reload()">VOLTAR AO LOGIN</button>
     </div>
 
-    <div id="sucesso">
-        <div style="font-size: 70px;">👑</div>
-        <h1 style="margin: 20px 0;">PARABÉNS!</h1>
+    <div id="success-screen" class="modal-overlay">
+        <div style="font-size: 60px;">👑</div>
+        <h2 style="font-size: 28px;">PARABÉNS!</h2>
         <p style="color: #a349a4; font-weight: bold;">Sua conta foi criada com sucesso!</p>
-        <button class="btn-fim" style="width: 200px; margin-top: 30px;" onclick="location.reload()">COMEÇAR</button>
+        <button class="btn-login" onclick="window.location.reload()">COMEÇAR AGORA</button>
     </div>
 
     <script>
-        // Sua configuração do Firebase (NÃO TRADUZIR)
+        // Configuração oficial do seu Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyD9YUu-ovvkUnB5xRdWKhroDoUsSw3MEXY",
             authDomain: "king-connect-2026.firebaseapp.com",
             projectId: "king-connect-2026",
-            storageBucket: "king-connect-2026.appspot.com",
+            storageBucket: "king-connect-2026.firebasestorage.app",
             databaseURL: "https://king-connect-2026-default-rtdb.firebaseio.com"
         };
 
+        // Inicializa o Firebase
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        const fb = firebase.database();
 
-        async function salvarNoFirebase() {
-            const nome = document.getElementById('user').value.trim();
-            const senha = document.getElementById('pass').value;
+        async function executarAuth() {
+            const user = document.getElementById('auth-user').value.trim();
+            const pass = document.getElementById('auth-pass').value;
+            const foto = document.getElementById('reg-foto').value;
 
-            if(!nome || !senha) {
+            if(!user || !pass) {
                 alert("Por favor, preencha o usuário e a senha!");
                 return;
             }
 
-            // Limpa o nome para não dar erro no Firebase
-            const idUsuario = nome.toLowerCase().replace(/[.#$[\]]/g, "_");
+            // Criar um ID limpo (sem pontos ou símbolos que o Firebase não aceita)
+            const userId = user.toLowerCase().replace(/[.#$[\]]/g, "_");
 
             try {
-                // SALVA OS DADOS
-                await db.ref('usuarios/' + idUsuario).set({
-                    login: nome,
-                    senha: senha,
-                    data: new Date().toLocaleString()
+                // SALVANDO NO FIREBASE
+                await fb.ref('users/' + userId).set({
+                    nome: user,
+                    pass: pass,
+                    foto: foto || "",
+                    criadoEm: new Date().toISOString()
                 });
-
-                // MOSTRA A TELA DE SUCESSO
-                document.getElementById('tela-cadastro').style.display = 'none';
-                document.getElementById('sucesso').style.display = 'flex';
-
-            } catch (erro) {
-                console.error(erro);
-                alert("Erro ao salvar! Verifique se as REGRAS do banco estão em 'true'.");
+                
+                // SE DER CERTO: Esconde o cadastro e mostra a coroa de sucesso
+                document.getElementById('login-modal').style.display = 'none';
+                document.getElementById('success-screen').style.display = 'flex';
+                
+            } catch (e) {
+                console.error("Erro detalhado:", e);
+                alert("Erro ao salvar! Verifique se você ativou o 'Realtime Database' no painel do Firebase e se as REGRAS estão em 'true'.");
             }
         }
     </script>
