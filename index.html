@@ -25,16 +25,11 @@
         .chat-item { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; }
         .chat-item img { width: 55px; height: 55px; border-radius: 50%; background: #eee; margin-right: 15px; object-fit: cover; }
         .chat-info h4 { font-size: 18px; color: #000; }
-        .chat-info p { font-size: 13px; color: #666; }
 
-        /* BOTÃO + */
-        .btn-add-chat { position: fixed; bottom: 100px; right: 25px; font-size: 45px; font-weight: bold; color: #000; cursor: pointer; z-index: 5; }
-
-        /* NAV BAR FIXA */
+        /* NAV BAR */
         .nav-bar { background: #000; height: 80px; display: flex; justify-content: space-around; align-items: center; width: 100%; position: fixed; bottom: 0; left: 0; z-index: 10; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; color: white; text-decoration: none; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; color: white; text-decoration: none; }
         .nav-item img { width: 32px; filter: invert(1); }
-        .nav-item span { font-size: 11px; font-weight: bold; }
 
         /* MODAIS */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 20px; }
@@ -45,17 +40,22 @@
         #chat-screen { position: fixed; inset: 0; background: #fff; display: none; flex-direction: column; z-index: 2000; }
         .chat-header { background: #000; color: #fff; padding: 15px; display: flex; align-items: center; justify-content: space-between; }
         .chat-user-info { display: flex; align-items: center; gap: 12px; }
-        .chat-avatar-topo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: #eee; }
+        .chat-avatar-topo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
         
-        #chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #fff; }
-        .msg-bubble { padding: 10px 15px; border-radius: 18px; max-width: 80%; font-weight: bold; word-wrap: break-word; font-size: 15px; }
+        #chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .msg-bubble { padding: 10px 15px; border-radius: 18px; max-width: 80%; font-weight: bold; word-wrap: break-word; position: relative; }
         .msg-me { align-self: flex-end; background: #a349a4; color: #fff; border-bottom-right-radius: 2px; }
         .msg-them { align-self: flex-start; background: #eee; color: #000; border-bottom-left-radius: 2px; }
+        
+        /* ÍCONE V / VV */
+        .status-v { font-size: 10px; margin-left: 5px; vertical-align: bottom; color: #dfdfdf; }
+        .v-blue { color: #00eeff; }
 
         .chat-footer { background: #000; padding: 12px; display: flex; align-items: center; gap: 10px; }
         .input-chat { flex: 1; padding: 12px 20px; border-radius: 25px; border: none; outline: none; font-weight: bold; }
-        .icon-footer { width: 28px; filter: invert(1); cursor: pointer; }
+        .btn-send-chat { background: #fff; color: #000; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; }
 
+        .btn-add-chat { position: fixed; bottom: 100px; right: 25px; font-size: 45px; font-weight: bold; color: #000; cursor: pointer; z-index: 5; }
         .profile-img-edit { width: 120px; height: 120px; border-radius: 50%; border: 3px solid #fff; margin-bottom: 15px; object-fit: cover; }
     </style>
 </head>
@@ -69,54 +69,37 @@
         <p onclick="toggleModoRegistro()" id="switch-text" style="margin-top:15px; cursor:pointer;">Criar Conta</p>
     </div>
 
-    <div id="perfil-modal" class="modal-overlay">
-        <img id="edit-foto-preview" class="profile-img-edit" src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" onclick="alterarFoto()">
-        <input type="text" id="edit-nome" class="input-king" placeholder="Nome Exibido">
-        <input type="text" id="edit-bio" class="input-king" placeholder="Sua Biografia">
-        <button class="btn-king" style="background:#a349a4; color:#fff;" onclick="salvarPerfil()">SALVAR ALTERAÇÕES</button>
-        <button class="btn-king" onclick="document.getElementById('perfil-modal').style.display='none'">CANCELAR</button>
-        <button class="btn-king" style="color:red;" onclick="logout()">DESLOGAR</button>
-    </div>
-
     <div id="chat-screen">
         <div class="chat-header">
             <div class="chat-user-info">
-                <span onclick="fecharChat()" style="font-size: 25px; cursor:pointer; padding-right:5px;">❮</span>
+                <span onclick="fecharChat()" style="font-size: 25px; cursor:pointer;">❮</span>
                 <img id="chat-foto-topo" class="chat-avatar-topo" src="">
                 <h3 id="chat-nome-topo">Nome</h3>
             </div>
-            <img src="https://cdn-icons-png.flaticon.com/512/15/15874.png" class="icon-footer" style="width:25px;">
+            <img src="https://cdn-icons-png.flaticon.com/512/15/15874.png" style="width:25px; filter:invert(1);">
         </div>
         <div id="chat-messages"></div>
         <div class="chat-footer">
             <input type="text" id="msg-input" class="input-chat" placeholder="ESCREVA AQUI!">
-            <img src="https://cdn-icons-png.flaticon.com/512/25/25665.png" class="icon-footer">
+            <button class="btn-send-chat" onclick="enviarMensagem()">ENVIAR</button>
         </div>
     </div>
 
     <header class="header-main">
         <h1>KINGConnect</h1>
-        <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" class="icon-top" onclick="abrirEdicaoPerfil()">
+        <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" class="icon-top" onclick="document.getElementById('perfil-modal').style.display='flex'">
     </header>
 
     <div id="main-content">
-        <div id="empty-msg" class="empty-state">
-            <h2 class="empty-text">OLÁ VOCÊ AINDA NÃO TEM CONVERSAS? INICIE UMA AGORA!</h2>
-        </div>
+        <div id="empty-msg" class="empty-state"><h2 class="empty-text">INICIE UMA CONVERSA AGORA!</h2></div>
         <div id="chats-lista"></div>
     </div>
 
     <div class="btn-add-chat" onclick="buscarUsuario()">+</div>
 
     <nav class="nav-bar">
-        <div class="nav-item">
-            <img src="https://cdn-icons-png.flaticon.com/512/1380/1380338.png">
-            <span>Mensagem</span>
-        </div>
-        <div class="nav-item">
-            <img src="https://cdn-icons-png.flaticon.com/512/1077/1077035.png">
-            <span>Post</span>
-        </div>
+        <div class="nav-item"><img src="https://cdn-icons-png.flaticon.com/512/1380/1380338.png"></div>
+        <div class="nav-item"><img src="https://cdn-icons-png.flaticon.com/512/1077/1077035.png"></div>
     </nav>
 
     <script>
@@ -131,7 +114,6 @@
         const fb = firebase.database();
 
         let currentUser = JSON.parse(localStorage.getItem('king_user'));
-        let modoRegistro = false;
         let chatAtivoId = null;
 
         if(currentUser) {
@@ -139,77 +121,15 @@
             carregarMinhasConversas();
         }
 
-        function toggleModoRegistro() {
-            modoRegistro = !modoRegistro;
-            document.querySelector('#login-modal h2').innerText = modoRegistro ? "CRIAR CONTA" : "KING LOGIN";
-        }
-
         async function executarAuth() {
             const user = document.getElementById('auth-user').value.trim();
             const pass = document.getElementById('auth-pass').value;
-            if(!user || !pass) return alert("Preencha tudo!");
             const id = user.toLowerCase().replace(/[.#$[\]]/g, "_");
-
-            const ref = fb.ref('users/' + id);
-            const snap = await ref.once('value');
-
-            if(modoRegistro) {
-                if(snap.exists()) return alert("Usuário já existe!");
-                const data = { id, nome: user, pass, bio: "Disponível", foto: "https://cdn-icons-png.flaticon.com/512/1144/1144760.png" };
-                await ref.set(data);
-                loginLocal(data);
-            } else {
-                if(!snap.exists() || snap.val().pass !== pass) return alert("Erro no login!");
-                loginLocal(snap.val());
-            }
-        }
-
-        function loginLocal(data) {
-            localStorage.setItem('king_user', JSON.stringify(data));
-            location.reload();
-        }
-
-        function logout() { localStorage.clear(); location.reload(); }
-
-        function abrirEdicaoPerfil() {
-            document.getElementById('edit-nome').value = currentUser.nome;
-            document.getElementById('edit-bio').value = currentUser.bio;
-            document.getElementById('edit-foto-preview').src = currentUser.foto || 'https://cdn-icons-png.flaticon.com/512/1144/1144760.png';
-            document.getElementById('perfil-modal').style.display = 'flex';
-        }
-
-        function alterarFoto() {
-            const novaFoto = prompt("Cole o link da sua nova foto de perfil:");
-            if(novaFoto) document.getElementById('edit-foto-preview').src = novaFoto;
-        }
-
-        async function salvarPerfil() {
-            const updates = { 
-                nome: document.getElementById('edit-nome').value, 
-                bio: document.getElementById('edit-bio').value, 
-                foto: document.getElementById('edit-foto-preview').src 
-            };
-            await fb.ref('users/' + currentUser.id).update(updates);
-            currentUser = {...currentUser, ...updates};
-            localStorage.setItem('king_user', JSON.stringify(currentUser));
-            alert("Perfil Atualizado!");
-            location.reload();
-        }
-
-        async function buscarUsuario() {
-            const busca = prompt("Nome do usuário:");
-            if(!busca) return;
-            const idBusca = busca.toLowerCase().replace(/[.#$[\]]/g, "_");
-            if(idBusca === currentUser.id) return alert("Você não pode conversar consigo mesmo!");
-
-            const snap = await fb.ref('users/' + idBusca).once('value');
-            if(snap.exists()) {
-                const alvo = snap.val();
-                await fb.ref(`conversas/${currentUser.id}/${idBusca}`).set({ nome: alvo.nome, foto: alvo.foto });
-                await fb.ref(`conversas/${idBusca}/${currentUser.id}`).set({ nome: currentUser.nome, foto: currentUser.foto });
-            } else {
-                alert("Usuário não existe!");
-            }
+            const snap = await fb.ref('users/' + id).once('value');
+            if(snap.exists() && snap.val().pass === pass) {
+                localStorage.setItem('king_user', JSON.stringify(snap.val()));
+                location.reload();
+            } else { alert("Erro de Login!"); }
         }
 
         function carregarMinhasConversas() {
@@ -220,14 +140,10 @@
                     document.getElementById('empty-msg').style.display = "none";
                     snap.forEach(child => {
                         const c = child.val();
-                        const item = document.createElement('div');
-                        item.className = 'chat-item';
-                        item.onclick = () => abrirChat(child.key, c.nome, c.foto);
-                        item.innerHTML = `
+                        lista.innerHTML += `<div class="chat-item" onclick="abrirChat('${child.key}','${c.nome}','${c.foto}')">
                             <img src="${c.foto || 'https://cdn-icons-png.flaticon.com/512/1144/1144760.png'}">
-                            <div class="chat-info"><h4>${c.nome}</h4><p>Toque para conversar</p></div>
-                        `;
-                        lista.appendChild(item);
+                            <div class="chat-info"><h4>${c.nome}</h4></div>
+                        </div>`;
                     });
                 }
             });
@@ -241,21 +157,32 @@
             ouvirMensagens(id);
         }
 
-        function fecharChat() {
-            document.getElementById('chat-screen').style.display = 'none';
-            chatAtivoId = null;
-        }
+        function fecharChat() { document.getElementById('chat-screen').style.display = 'none'; chatAtivoId = null; }
 
         function ouvirMensagens(alvoId) {
             const chatID = [currentUser.id, alvoId].sort().join("_");
-            fb.ref(`mensagens/${chatID}`).off();
-            fb.ref(`mensagens/${chatID}`).on('value', snap => {
+            const ref = fb.ref(`mensagens/${chatID}`);
+            ref.off();
+            ref.on('value', snap => {
                 const box = document.getElementById('chat-messages');
                 box.innerHTML = "";
                 snap.forEach(m => {
                     const msg = m.val();
-                    const classe = msg.sender === currentUser.id ? 'msg-me' : 'msg-them';
-                    box.innerHTML += `<div class="msg-bubble ${classe}">${msg.texto}</div>`;
+                    const isMe = msg.sender === currentUser.id;
+                    const classe = isMe ? 'msg-me' : 'msg-them';
+                    
+                    // Marcar como lida se for mensagem do outro
+                    if(!isMe && msg.lida === false) {
+                        fb.ref(`mensagens/${chatID}/${m.key}`).update({lida: true});
+                    }
+
+                    // Ícone V ou VV
+                    let statusHtml = "";
+                    if(isMe) {
+                        statusHtml = msg.lida ? "<span class='status-v v-blue'>VV</span>" : "<span class='status-v'>V</span>";
+                    }
+
+                    box.innerHTML += `<div class="msg-bubble ${classe}">${msg.texto} ${statusHtml}</div>`;
                 });
                 box.scrollTop = box.scrollHeight;
             });
@@ -265,19 +192,15 @@
             const input = document.getElementById('msg-input');
             const txt = input.value.trim();
             if(!txt || !chatAtivoId) return;
-
             const chatID = [currentUser.id, chatAtivoId].sort().join("_");
             await fb.ref(`mensagens/${chatID}`).push({
                 texto: txt,
                 sender: currentUser.id,
+                lida: false,
                 timestamp: Date.now()
             });
             input.value = "";
         }
-
-        document.getElementById('msg-input').addEventListener('keypress', e => {
-            if(e.key === 'Enter') enviarMensagem();
-        });
     </script>
 </body>
 </html>
