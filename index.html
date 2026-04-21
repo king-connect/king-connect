@@ -9,66 +9,62 @@
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
-        body { background-color: #000; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; gap: 15px; }
-        .input-login { width: 80%; max-width: 300px; padding: 15px; border-radius: 25px; border: none; outline: none; font-weight: bold; text-align: center; color: #000; background: #fff; }
+        body { background-color: #000; height: 100vh; display: flex; flex-direction: column; overflow: hidden; color: white; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; }
+        .input-login { width: 80%; max-width: 300px; padding: 15px; border-radius: 25px; border: none; outline: none; font-weight: bold; text-align: center; color: #000; }
         .btn-login { background: #fff; color: #000; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 16px; width: 80%; max-width: 300px; }
-        .btn-create { background: #a349a4; color: #fff; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 16px; width: 80%; max-width: 300px; }
-        #success-screen { display: none; text-align: center; z-index: 2000; }
+        #success-screen { display: none; text-align: center; }
     </style>
 </head>
 <body>
 
     <div id="login-modal" class="modal-overlay">
-        <h2 id="auth-title">NOVA CONTA</h2>
+        <h2>NOVA CONTA</h2>
         <input type="text" id="auth-user" class="input-login" placeholder="Nome de Usuário">
         <input type="password" id="auth-pass" class="input-login" placeholder="Senha">
-        <input type="text" id="reg-foto" class="input-login" placeholder="Link da Foto (Opcional)">
-        
         <button class="btn-login" onclick="executarAuth()">FINALIZAR CADASTRO</button>
-        <button class="btn-create" onclick="window.location.reload()">VOLTAR AO LOGIN</button>
     </div>
 
     <div id="success-screen" class="modal-overlay">
         <div style="font-size: 60px;">👑</div>
-        <h2 style="font-size: 28px;">PARABÉNS!</h2>
-        <p style="color: #a349a4; font-weight: bold;">Sua conta foi criada com sucesso!</p>
-        <button class="btn-login" onclick="window.location.reload()">COMEÇAR AGORA</button>
+        <h2>PARABÉNS!</h2>
+        <p>Sua conta foi criada com sucesso!</p>
+        <button class="btn-login" onclick="location.reload()">COMEÇAR</button>
     </div>
 
     <script>
+        // CONFIGURAÇÃO TÉCNICA (NÃO TRADUZIR)
         const firebaseConfig = {
             apiKey: "AIzaSyD9YUu-ovvkUnB5xRdWKhroDoUsSw3MEXY",
             authDomain: "king-connect-2026.firebaseapp.com",
             projectId: "king-connect-2026",
             storageBucket: "king-connect-2026.firebasestorage.app",
-            databaseURL: "https://king-connect-2026-default-rtdb.firebaseio.com" // URL corrigida
+            databaseURL: "https://king-connect-2026-default-rtdb.firebaseio.com"
         };
+        
         firebase.initializeApp(firebaseConfig);
         const fb = firebase.database();
 
         async function executarAuth() {
             const user = document.getElementById('auth-user').value.trim();
             const pass = document.getElementById('auth-pass').value;
-            const foto = document.getElementById('reg-foto').value;
 
-            if(!user || !pass) return alert("Preencha tudo!");
+            if(!user || !pass) return alert("Preencha os campos!");
 
             const userId = user.toLowerCase().replace(/[.#$[\]]/g, "_");
 
             try {
-                // Salva no banco
+                // Tenta salvar no Firebase
                 await fb.ref('users/' + userId).set({
                     nome: user,
-                    pass: pass,
-                    foto: foto || ""
+                    pass: pass
                 });
                 
-                // Mostra a tela de sucesso
+                // Se deu certo, mostra a tela de parabéns
                 document.getElementById('login-modal').style.display = 'none';
                 document.getElementById('success-screen').style.display = 'flex';
             } catch (e) {
-                alert("Erro ao salvar: " + e.message);
+                alert("Erro ao salvar! Verifique se as REGRAS do banco estão em 'true'.");
             }
         }
     </script>
