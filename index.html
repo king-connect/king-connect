@@ -16,67 +16,71 @@
         .header-main h1 { font-size: 24px; font-weight: bold; }
         .icon-top { width: 30px; height: 30px; cursor: pointer; filter: invert(1); }
 
-        /* CONTEÚDO HOME */
-        #main-content { flex: 1; overflow-y: auto; padding-bottom: 90px; position: relative; }
-        .empty-state { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 40px; text-align: center; }
-        .empty-text { font-size: 22px; font-weight: 800; color: #000; text-transform: uppercase; }
-
         /* LISTA DE CONVERSAS */
-        .chat-item { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; }
-        .chat-item img { width: 55px; height: 55px; border-radius: 50%; background: #eee; margin-right: 15px; object-fit: cover; }
-        .chat-info h4 { font-size: 18px; color: #000; }
+        #main-content { flex: 1; overflow-y: auto; padding-bottom: 90px; }
+        .chat-item { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; position: relative; }
+        .chat-item img { width: 55px; height: 55px; border-radius: 50%; background: #eee; margin-right: 15px; object-fit: cover; border: 1px solid #ddd; }
+        .chat-info { flex: 1; }
+        .chat-info h4 { font-size: 17px; color: #000; margin-bottom: 2px; }
+        .chat-info p { font-size: 13px; color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+        
+        .badge-count { background: #ff4d4d; color: #fff; font-size: 11px; font-weight: bold; min-width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: absolute; right: 25px; top: 35px; }
 
         /* NAV BAR */
-        .nav-bar { background: #000; height: 80px; display: flex; justify-content: space-around; align-items: center; width: 100%; position: fixed; bottom: 0; left: 0; z-index: 10; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; color: white; text-decoration: none; }
-        .nav-item img { width: 32px; filter: invert(1); }
-
-        /* MODAIS */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 20px; }
-        .input-king { width: 100%; max-width: 300px; padding: 15px; border-radius: 25px; border: none; margin-bottom: 10px; text-align: center; font-weight: bold; outline: none; }
-        .btn-king { background: #fff; color: #000; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-weight: bold; width: 100%; max-width: 300px; margin-top: 10px; }
+        .nav-bar { background: #000; height: 80px; display: flex; justify-content: space-around; align-items: center; width: 100%; position: fixed; bottom: 0; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #fff; font-size: 11px; font-weight: bold; gap: 4px; }
+        .nav-item img { width: 26px; filter: invert(1); }
 
         /* TELA DE CHAT */
         #chat-screen { position: fixed; inset: 0; background: #fff; display: none; flex-direction: column; z-index: 2000; }
         .chat-header { background: #000; color: #fff; padding: 15px; display: flex; align-items: center; justify-content: space-between; }
         .chat-user-info { display: flex; align-items: center; gap: 12px; }
-        .chat-avatar-topo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .chat-avatar-topo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #444; }
         
         #chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .msg-bubble { padding: 10px 15px; border-radius: 18px; max-width: 80%; font-weight: bold; word-wrap: break-word; position: relative; }
+        .msg-bubble { padding: 10px 15px; border-radius: 18px; max-width: 80%; font-weight: bold; position: relative; word-wrap: break-word; font-size: 15px; }
         .msg-me { align-self: flex-end; background: #a349a4; color: #fff; border-bottom-right-radius: 2px; }
         .msg-them { align-self: flex-start; background: #eee; color: #000; border-bottom-left-radius: 2px; }
-        
-        /* ÍCONE V / VV */
-        .status-v { font-size: 10px; margin-left: 5px; vertical-align: bottom; color: #dfdfdf; }
+        .status-v { font-size: 10px; margin-left: 5px; opacity: 0.8; }
         .v-blue { color: #00eeff; }
 
         .chat-footer { background: #000; padding: 12px; display: flex; align-items: center; gap: 10px; }
         .input-chat { flex: 1; padding: 12px 20px; border-radius: 25px; border: none; outline: none; font-weight: bold; }
         .btn-send-chat { background: #fff; color: #000; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; }
 
-        .btn-add-chat { position: fixed; bottom: 100px; right: 25px; font-size: 45px; font-weight: bold; color: #000; cursor: pointer; z-index: 5; }
-        .profile-img-edit { width: 120px; height: 120px; border-radius: 50%; border: 3px solid #fff; margin-bottom: 15px; object-fit: cover; }
+        /* MODAIS */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 3000; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 20px; }
+        .profile-img-big { width: 130px; height: 130px; border-radius: 50%; border: 3px solid #fff; margin-bottom: 15px; object-fit: cover; background: #222; }
+        .input-king { width: 100%; max-width: 300px; padding: 15px; border-radius: 25px; border: none; margin-bottom: 10px; text-align: center; font-weight: bold; outline: none; }
+        
+        .btn-add-chat { position: fixed; bottom: 100px; right: 25px; font-size: 40px; background: #000; color: #fff; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 5; }
     </style>
 </head>
 <body>
 
     <div id="login-modal" class="modal-overlay" style="display: flex;">
         <h2>KING LOGIN</h2>
-        <input type="text" id="auth-user" class="input-king" placeholder="Usuário">
+        <input type="text" id="auth-user" class="input-king" placeholder="Nome de Usuário">
         <input type="password" id="auth-pass" class="input-king" placeholder="Senha">
-        <button class="btn-king" onclick="executarAuth()">ENTRAR</button>
-        <p onclick="toggleModoRegistro()" id="switch-text" style="margin-top:15px; cursor:pointer;">Criar Conta</p>
+        <button class="btn-send-chat" style="width: 200px;" onclick="executarAuth()">ENTRAR / CRIAR</button>
+    </div>
+
+    <div id="perfil-modal" class="modal-overlay">
+        <img id="edit-foto-preview" class="profile-img-big" src="" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1144/1144760.png'">
+        <input type="text" id="edit-nome" class="input-king" placeholder="Seu Nome">
+        <input type="text" id="edit-foto-url" class="input-king" placeholder="Cole aqui a URL da foto (Google/Web)">
+        <button class="btn-send-chat" onclick="salvarPerfil()">SALVAR ALTERAÇÕES</button>
+        <button class="btn-send-chat" style="background:#ff4d4d; color:#fff;" onclick="logout()">SAIR DA CONTA</button>
+        <p onclick="document.getElementById('perfil-modal').style.display='none'" style="margin-top:20px; cursor:pointer;">FECHAR</p>
     </div>
 
     <div id="chat-screen">
         <div class="chat-header">
             <div class="chat-user-info">
-                <span onclick="fecharChat()" style="font-size: 25px; cursor:pointer;">❮</span>
-                <img id="chat-foto-topo" class="chat-avatar-topo" src="">
-                <h3 id="chat-nome-topo">Nome</h3>
+                <span onclick="fecharChat()" style="font-size: 25px; cursor:pointer; padding: 0 10px;">❮</span>
+                <img id="chat-foto-topo" class="chat-avatar-topo" src="" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1144/1144760.png'">
+                <h3 id="chat-nome-topo">---</h3>
             </div>
-            <img src="https://cdn-icons-png.flaticon.com/512/15/15874.png" style="width:25px; filter:invert(1);">
         </div>
         <div id="chat-messages"></div>
         <div class="chat-footer">
@@ -87,19 +91,24 @@
 
     <header class="header-main">
         <h1>KINGConnect</h1>
-        <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" class="icon-top" onclick="document.getElementById('perfil-modal').style.display='flex'">
+        <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" class="icon-top" onclick="abrirPerfil()">
     </header>
 
     <div id="main-content">
-        <div id="empty-msg" class="empty-state"><h2 class="empty-text">INICIE UMA CONVERSA AGORA!</h2></div>
         <div id="chats-lista"></div>
     </div>
 
     <div class="btn-add-chat" onclick="buscarUsuario()">+</div>
 
     <nav class="nav-bar">
-        <div class="nav-item"><img src="https://cdn-icons-png.flaticon.com/512/1380/1380338.png"></div>
-        <div class="nav-item"><img src="https://cdn-icons-png.flaticon.com/512/1077/1077035.png"></div>
+        <div class="nav-item">
+            <img src="https://cdn-icons-png.flaticon.com/512/1380/1380338.png">
+            <span>Mensagem</span>
+        </div>
+        <div class="nav-item">
+            <img src="https://cdn-icons-png.flaticon.com/512/1077/1077035.png">
+            <span>Post</span>
+        </div>
     </nav>
 
     <script>
@@ -124,65 +133,109 @@
         async function executarAuth() {
             const user = document.getElementById('auth-user').value.trim();
             const pass = document.getElementById('auth-pass').value;
+            if(!user || !pass) return alert("Preencha tudo!");
+            
             const id = user.toLowerCase().replace(/[.#$[\]]/g, "_");
             const snap = await fb.ref('users/' + id).once('value');
-            if(snap.exists() && snap.val().pass === pass) {
-                localStorage.setItem('king_user', JSON.stringify(snap.val()));
+
+            if(snap.exists()) {
+                if(snap.val().pass === pass) {
+                    localStorage.setItem('king_user', JSON.stringify(snap.val()));
+                    location.reload();
+                } else { alert("Senha incorreta!"); }
+            } else {
+                const novoUsuario = { id, nome: user, pass, foto: "" };
+                await fb.ref('users/' + id).set(novoUsuario);
+                localStorage.setItem('king_user', JSON.stringify(novoUsuario));
                 location.reload();
-            } else { alert("Erro de Login!"); }
+            }
+        }
+
+        function abrirPerfil() {
+            document.getElementById('edit-nome').value = currentUser.nome;
+            document.getElementById('edit-foto-url').value = currentUser.foto || "";
+            document.getElementById('edit-foto-preview').src = currentUser.foto || "";
+            document.getElementById('perfil-modal').style.display = 'flex';
+        }
+
+        async function salvarPerfil() {
+            const url = document.getElementById('edit-foto-url').value.trim();
+            const nome = document.getElementById('edit-nome').value.trim();
+            
+            const updates = { nome: nome, foto: url };
+            await fb.ref('users/' + currentUser.id).update(updates);
+            
+            // Atualiza local
+            currentUser.nome = nome;
+            currentUser.foto = url;
+            localStorage.setItem('king_user', JSON.stringify(currentUser));
+            alert("Perfil salvo!");
+            location.reload();
         }
 
         function carregarMinhasConversas() {
             fb.ref(`conversas/${currentUser.id}`).on('value', snap => {
                 const lista = document.getElementById('chats-lista');
                 lista.innerHTML = "";
-                if(snap.exists()){
-                    document.getElementById('empty-msg').style.display = "none";
-                    snap.forEach(child => {
-                        const c = child.val();
-                        lista.innerHTML += `<div class="chat-item" onclick="abrirChat('${child.key}','${c.nome}','${c.foto}')">
-                            <img src="${c.foto || 'https://cdn-icons-png.flaticon.com/512/1144/1144760.png'}">
-                            <div class="chat-info"><h4>${c.nome}</h4></div>
-                        </div>`;
+                snap.forEach(child => {
+                    const c = child.val();
+                    const alvoId = child.key;
+                    const chatID = [currentUser.id, alvoId].sort().join("_");
+
+                    const item = document.createElement('div');
+                    item.className = 'chat-item';
+                    item.innerHTML = `
+                        <img src="${c.foto}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1144/1144760.png'">
+                        <div class="chat-info" onclick="abrirChat('${alvoId}','${c.nome}','${c.foto}')">
+                            <h4>${c.nome}</h4>
+                            <p id="last-${alvoId}">...</p>
+                        </div>
+                        <div id="badge-${alvoId}"></div>
+                    `;
+                    lista.appendChild(item);
+
+                    fb.ref(`mensagens/${chatID}`).on('value', mSnap => {
+                        let totalNaoLidas = 0;
+                        let lastTxt = "Sem mensagens";
+                        mSnap.forEach(m => {
+                            const d = m.val();
+                            lastTxt = d.texto;
+                            if(d.sender !== currentUser.id && !d.lida) totalNaoLidas++;
+                        });
+                        if(document.getElementById(`last-${alvoId}`)) {
+                            document.getElementById(`last-${alvoId}`).innerText = lastTxt;
+                            document.getElementById(`badge-${alvoId}`).innerHTML = totalNaoLidas > 0 ? `<span class="badge-count">${totalNaoLidas}</span>` : "";
+                        }
                     });
-                }
+                });
             });
         }
 
         function abrirChat(id, nome, foto) {
             chatAtivoId = id;
             document.getElementById('chat-nome-topo').innerText = nome;
-            document.getElementById('chat-foto-topo').src = foto || 'https://cdn-icons-png.flaticon.com/512/1144/1144760.png';
+            document.getElementById('chat-foto-topo').src = foto;
             document.getElementById('chat-screen').style.display = 'flex';
             ouvirMensagens(id);
         }
 
-        function fecharChat() { document.getElementById('chat-screen').style.display = 'none'; chatAtivoId = null; }
+        function fecharChat() {
+            if(chatAtivoId) fb.ref(`mensagens/${[currentUser.id, chatAtivoId].sort().join("_")}`).off();
+            document.getElementById('chat-screen').style.display = 'none';
+            chatAtivoId = null;
+        }
 
         function ouvirMensagens(alvoId) {
             const chatID = [currentUser.id, alvoId].sort().join("_");
-            const ref = fb.ref(`mensagens/${chatID}`);
-            ref.off();
-            ref.on('value', snap => {
+            fb.ref(`mensagens/${chatID}`).on('value', snap => {
                 const box = document.getElementById('chat-messages');
                 box.innerHTML = "";
                 snap.forEach(m => {
                     const msg = m.val();
                     const isMe = msg.sender === currentUser.id;
-                    const classe = isMe ? 'msg-me' : 'msg-them';
-                    
-                    // Marcar como lida se for mensagem do outro
-                    if(!isMe && msg.lida === false) {
-                        fb.ref(`mensagens/${chatID}/${m.key}`).update({lida: true});
-                    }
-
-                    // Ícone V ou VV
-                    let statusHtml = "";
-                    if(isMe) {
-                        statusHtml = msg.lida ? "<span class='status-v v-blue'>VV</span>" : "<span class='status-v'>V</span>";
-                    }
-
-                    box.innerHTML += `<div class="msg-bubble ${classe}">${msg.texto} ${statusHtml}</div>`;
+                    if(!isMe && !msg.lida) fb.ref(`mensagens/${chatID}/${m.key}`).update({lida: true});
+                    const check = isMe ? (msg.lida ? "<span class='status-v v-blue'>VV</span>" : "<span class='status-v'>V</span>") : "";
+                    box.innerHTML += `<div class="msg-bubble ${isMe ? 'msg-me' : 'msg-them'}">${msg.texto} ${check}</div>`;
                 });
                 box.scrollTop = box.scrollHeight;
             });
@@ -190,17 +243,29 @@
 
         async function enviarMensagem() {
             const input = document.getElementById('msg-input');
-            const txt = input.value.trim();
-            if(!txt || !chatAtivoId) return;
+            if(!input.value.trim() || !chatAtivoId) return;
             const chatID = [currentUser.id, chatAtivoId].sort().join("_");
             await fb.ref(`mensagens/${chatID}`).push({
-                texto: txt,
+                texto: input.value,
                 sender: currentUser.id,
                 lida: false,
-                timestamp: Date.now()
+                time: Date.now()
             });
             input.value = "";
         }
+
+        async function buscarUsuario() {
+            const id = prompt("Digite o nome de usuário que deseja chamar:").toLowerCase();
+            if(!id || id === currentUser.id) return;
+            const snap = await fb.ref('users/' + id).once('value');
+            if(snap.exists()) {
+                const alvo = snap.val();
+                await fb.ref(`conversas/${currentUser.id}/${id}`).set({ nome: alvo.nome, foto: alvo.foto });
+                await fb.ref(`conversas/${id}/${currentUser.id}`).set({ nome: currentUser.nome, foto: currentUser.foto });
+            } else { alert("Usuário não encontrado!"); }
+        }
+
+        function logout() { localStorage.clear(); location.reload(); }
     </script>
 </body>
 </html>
