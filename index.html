@@ -9,263 +9,384 @@
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
-        body { background-color: #fff; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { background-color: #fff; height: 100vh; width: 100vw; display: flex; overflow: hidden; }
 
-        /* HEADER */
-        .header-main { background: #000; color: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
-        .header-main h1 { font-size: 24px; font-weight: bold; }
-        .icon-top { width: 30px; height: 30px; cursor: pointer; filter: invert(1); }
-
-        /* LISTA DE CONVERSAS */
-        #main-content { flex: 1; overflow-y: auto; padding-bottom: 90px; }
-        .chat-item { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; position: relative; }
-        .chat-item img { width: 55px; height: 55px; border-radius: 50%; background: #eee; margin-right: 15px; object-fit: cover; border: 1px solid #ddd; }
-        .chat-info { flex: 1; }
-        .chat-info h4 { font-size: 17px; color: #000; margin-bottom: 2px; }
-        .chat-info p { font-size: 13px; color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px; }
+        #side-l { width: 80px; background: #000; display: flex; flex-direction: column; align-items: center; padding-top: 20px; gap: 30px; flex-shrink: 0; z-index: 100; }
+        #side-r { width: 45px; background: #000; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 5px; flex-shrink: 0; writing-mode: vertical-rl; }
         
-        .badge-count { background: #ff4d4d; color: #fff; font-size: 11px; font-weight: bold; min-width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: absolute; right: 25px; top: 35px; }
+        .main-container { flex: 1; display: flex; flex-direction: column; position: relative; overflow: hidden; background: #fff; }
+        .header-main { background: #000; color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+        .header-main h1 { font-size: 22px; font-weight: bold; letter-spacing: 1px; }
+        .icon-perfil-top { width: 35px; height: 35px; cursor: pointer; border-radius: 50%; border: 1px solid #fff; }
 
-        /* NAV BAR */
-        .nav-bar { background: #000; height: 80px; display: flex; justify-content: space-around; align-items: center; width: 100%; position: fixed; bottom: 0; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #fff; font-size: 11px; font-weight: bold; gap: 4px; }
-        .nav-item img { width: 26px; filter: invert(1); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #fff; font-size: 10px; font-weight: bold; gap: 5px; cursor: pointer; opacity: 0.7; transition: 0.3s; }
+        .nav-item:hover, .nav-item.active { opacity: 1; }
+        .nav-item img { width: 28px; filter: invert(1); }
 
-        /* TELA DE CHAT */
-        #chat-screen { position: fixed; inset: 0; background: #fff; display: none; flex-direction: column; z-index: 2000; }
-        .chat-header { background: #000; color: #fff; padding: 15px; display: flex; align-items: center; justify-content: space-between; }
-        .chat-user-info { display: flex; align-items: center; gap: 12px; }
-        .chat-avatar-topo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #444; }
+        .aba-content { display: none; flex: 1; overflow-y: auto; padding: 10px; }
+        .aba-content.active { display: block; }
+
+        .chat-item { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; }
+        .chat-item img { width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; object-fit: cover; background: #eee; }
         
+        .post-card { max-width: 600px; margin: 0 auto 20px auto; border: 1px solid #eee; border-radius: 10px; overflow: hidden; background: #fff; position: relative; }
+        .post-header { display: flex; align-items: center; gap: 10px; padding: 12px; }
+        .post-header img { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; }
+        .post-media { width: 100%; display: block; background: #000; max-height: 500px; object-fit: contain; }
+        .post-footer { padding: 12px; font-size: 14px; }
+        .btn-del { position: absolute; top: 12px; right: 12px; color: red; font-size: 10px; cursor: pointer; font-weight: bold; background: #fff; padding: 3px 8px; border-radius: 5px; border: 1px solid #eee; z-index: 5; }
+
+        .btn-add { position: absolute; bottom: 20px; right: 20px; width: 55px; height: 55px; background: #000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; border: 2px solid #fff; z-index: 50; }
+
+        .mobile-nav { display: none; position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: #000; justify-content: space-around; align-items: center; z-index: 1000; }
+
+        @media (max-width: 768px) {
+            #side-l, #side-r { display: none !important; }
+            .mobile-nav { display: flex; }
+            .main-container { padding-bottom: 70px; }
+            .btn-add { bottom: 90px; }
+        }
+
+        .modal-upload { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 7000; display: none; flex-direction: column; align-items: center; justify-content: center; color: #fff; padding: 20px; }
+        .upload-container { width: 100%; max-width: 400px; text-align: center; }
+        .upload-container textarea { width: 100%; height: 100px; margin: 15px 0; padding: 12px; border-radius: 10px; border: none; font-weight: bold; }
+        .preview-box { width: 100%; max-height: 250px; border-radius: 10px; margin-bottom: 15px; display: none; object-fit: cover; border: 2px dashed #555; }
+        .btn-post { width: 100%; padding: 15px; background: #fff; color: #000; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+
+        #chat-screen { position: fixed; inset: 0; background: #fff; display: none; flex-direction: column; z-index: 5000; }
+        .chat-header { background: #000; color: #fff; padding: 15px; display: flex; align-items: center; gap: 15px; }
         #chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .msg-bubble { padding: 10px 15px; border-radius: 18px; max-width: 80%; font-weight: bold; position: relative; word-wrap: break-word; font-size: 15px; }
-        .msg-me { align-self: flex-end; background: #a349a4; color: #fff; border-bottom-right-radius: 2px; }
-        .msg-them { align-self: flex-start; background: #eee; color: #000; border-bottom-left-radius: 2px; }
-        .status-v { font-size: 10px; margin-left: 5px; opacity: 0.8; }
-        .v-blue { color: #00eeff; }
+        .msg { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-weight: bold; }
+        .msg-me { align-self: flex-end; background: #a349a4; color: #fff; }
+        .msg-them { align-self: flex-start; background: #eee; }
 
-        .chat-footer { background: #000; padding: 12px; display: flex; align-items: center; gap: 10px; }
-        .input-chat { flex: 1; padding: 12px 20px; border-radius: 25px; border: none; outline: none; font-weight: bold; }
-        .btn-send-chat { background: #fff; color: #000; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; }
-
-        /* MODAIS */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 3000; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 20px; }
-        .profile-img-big { width: 130px; height: 130px; border-radius: 50%; border: 3px solid #fff; margin-bottom: 15px; object-fit: cover; background: #222; }
-        .input-king { width: 100%; max-width: 300px; padding: 15px; border-radius: 25px; border: none; margin-bottom: 10px; text-align: center; font-weight: bold; outline: none; }
-        
-        .btn-add-chat { position: fixed; bottom: 100px; right: 25px; font-size: 40px; background: #000; color: #fff; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 5; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 6000; display: none; flex-direction: column; align-items: center; justify-content: center; color: #fff; padding: 20px; }
+        input[type="text"], input[type="password"] { padding: 12px; border-radius: 20px; border: none; width: 100%; max-width: 300px; margin: 10px 0; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="login-modal" class="modal-overlay" style="display: flex;">
-        <h2>KING LOGIN</h2>
-        <input type="text" id="auth-user" class="input-king" placeholder="Nome de Usuário">
-        <input type="password" id="auth-pass" class="input-king" placeholder="Senha">
-        <button class="btn-send-chat" style="width: 200px;" onclick="executarAuth()">ENTRAR / CRIAR</button>
-    </div>
-
-    <div id="perfil-modal" class="modal-overlay">
-        <img id="edit-foto-preview" class="profile-img-big" src="" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1144/1144760.png'">
-        <input type="text" id="edit-nome" class="input-king" placeholder="Seu Nome">
-        <input type="text" id="edit-foto-url" class="input-king" placeholder="Cole aqui a URL da foto (Google/Web)">
-        <button class="btn-send-chat" onclick="salvarPerfil()">SALVAR ALTERAÇÕES</button>
-        <button class="btn-send-chat" style="background:#ff4d4d; color:#fff;" onclick="logout()">SAIR DA CONTA</button>
-        <p onclick="document.getElementById('perfil-modal').style.display='none'" style="margin-top:20px; cursor:pointer;">FECHAR</p>
-    </div>
-
-    <div id="chat-screen">
-        <div class="chat-header">
-            <div class="chat-user-info">
-                <span onclick="fecharChat()" style="font-size: 25px; cursor:pointer; padding: 0 10px;">❮</span>
-                <img id="chat-foto-topo" class="chat-avatar-topo" src="" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1144/1144760.png'">
-                <h3 id="chat-nome-topo">---</h3>
-            </div>
-        </div>
-        <div id="chat-messages"></div>
-        <div class="chat-footer">
-            <input type="text" id="msg-input" class="input-chat" placeholder="ESCREVA AQUI!">
-            <button class="btn-send-chat" onclick="enviarMensagem()">ENVIAR</button>
-        </div>
-    </div>
-
-    <header class="header-main">
-        <h1>KINGConnect</h1>
-        <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" class="icon-top" onclick="abrirPerfil()">
-    </header>
-
-    <div id="main-content">
-        <div id="chats-lista"></div>
-    </div>
-
-    <div class="btn-add-chat" onclick="buscarUsuario()">+</div>
-
-    <nav class="nav-bar">
-        <div class="nav-item">
+    <div id="side-l">
+        <div class="nav-item active" onclick="switchTab('mensagens')">
             <img src="https://cdn-icons-png.flaticon.com/512/1380/1380338.png">
             <span>Mensagem</span>
         </div>
-        <div class="nav-item">
+        <div class="nav-item" onclick="switchTab('posts')">
+            <img src="https://cdn-icons-png.flaticon.com/512/1077/1077035.png">
+            <span>Post</span>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <header class="header-main">
+            <h1 id="view-title">KINGConnect</h1>
+            <img id="my-avatar" src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" class="icon-perfil-top">
+        </header>
+
+        <div id="aba-mensagens" class="aba-content active">
+            <div id="chats-lista"></div>
+            <div class="btn-add" onclick="novoChat()">+</div>
+        </div>
+
+        <div id="aba-posts" class="aba-content">
+            <div id="feed-posts"></div>
+            <div class="btn-add" onclick="abrirModalPost()">+</div>
+        </div>
+    </div>
+
+    <div id="side-r">KINGConnect</div>
+
+    <nav class="mobile-nav">
+        <div class="nav-item active" onclick="switchTab('mensagens')">
+            <img src="https://cdn-icons-png.flaticon.com/512/1380/1380338.png">
+            <span>Mensagem</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('posts')">
             <img src="https://cdn-icons-png.flaticon.com/512/1077/1077035.png">
             <span>Post</span>
         </div>
     </nav>
 
+    <div id="post-modal-upload" class="modal-upload">
+        <div class="upload-container">
+            <h2>Novo Post</h2>
+            <textarea id="post-legenda" placeholder="Escreva algo..."></textarea>
+            <img id="pre-img" class="preview-box">
+            <video id="pre-video" class="preview-box" controls></video>
+            <label style="cursor:pointer; display:block; margin-bottom:15px; color:#aaa;">
+                📷 Selecionar Mídia (Vídeos curtos)
+                <input type="file" id="file-input" hidden accept="image/*,video/*" onchange="previewMedia()">
+            </label>
+            <button id="btn-pub" class="btn-post" onclick="enviarPostCompleto()">PUBLICAR</button>
+            <p onclick="fecharModalPost()" style="margin-top:20px; cursor:pointer; color:red;">Cancelar</p>
+        </div>
+    </div>
+
+    <div id="login-modal" class="modal" style="display: flex;">
+        <h2>KING LOGIN</h2>
+        <input type="text" id="login-user" placeholder="Usuário">
+        <input type="password" id="login-pass" placeholder="Senha">
+        <button onclick="auth()" style="padding:10px 30px; border-radius:20px; cursor:pointer; font-weight:bold;">ENTRAR</button>
+    </div>
+
+    <div id="chat-screen">
+        <div class="chat-header">
+            <span onclick="fecharChat()" style="cursor:pointer; font-size:20px;">❮ Voltar</span>
+            <h3 id="chat-nome-title">Usuário</h3>
+        </div>
+        <div id="chat-messages"></div>
+        <div style="background:#000; padding:10px; display:flex; gap:10px;">
+            <input type="text" id="msg-input" style="flex:1; margin:0;" placeholder="Digite algo...">
+            <button onclick="enviarMensagem()" style="background:#fff; border:none; padding:10px; border-radius:10px; font-weight:bold;">ENVIAR</button>
+        </div>
+    </div>
+
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyD9YUu-ovvkUnB5xRdWKhroDoUsSw3MEXY",
-            authDomain: "king-connect-2026.firebaseapp.com",
-            projectId: "king-connect-2026",
-            storageBucket: "king-connect-2026.appspot.com",
-            databaseURL: "https://king-connect-2026-default-rtdb.firebaseio.com"
+        const firebaseConfig = { 
+            apiKey: "AIzaSyD9YUu-ovvkUnB5xRdWKhroDoUsSw3MEXY", 
+            databaseURL: "https://king-connect-2026-default-rtdb.firebaseio.com" 
         };
         firebase.initializeApp(firebaseConfig);
         const fb = firebase.database();
 
         let currentUser = JSON.parse(localStorage.getItem('king_user'));
-        let chatAtivoId = null;
-
-        if(currentUser) {
+        if(currentUser) { 
             document.getElementById('login-modal').style.display = 'none';
-            carregarMinhasConversas();
+            document.getElementById('my-avatar').src = currentUser.foto || "https://cdn-icons-png.flaticon.com/512/1144/1144760.png";
+            carregarConversas(); 
         }
 
-        async function executarAuth() {
-            const user = document.getElementById('auth-user').value.trim();
-            const pass = document.getElementById('auth-pass').value;
-            if(!user || !pass) return alert("Preencha tudo!");
-            
-            const id = user.toLowerCase().replace(/[.#$[\]]/g, "_");
-            const snap = await fb.ref('users/' + id).once('value');
-
-            if(snap.exists()) {
-                if(snap.val().pass === pass) {
-                    localStorage.setItem('king_user', JSON.stringify(snap.val()));
-                    location.reload();
-                } else { alert("Senha incorreta!"); }
+        function switchTab(tab) {
+            document.querySelectorAll('.aba-content').forEach(a => a.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            if(tab === 'mensagens') {
+                document.getElementById('aba-mensagens').classList.add('active');
+                document.getElementById('view-title').innerText = "KINGConnect";
             } else {
-                const novoUsuario = { id, nome: user, pass, foto: "" };
-                await fb.ref('users/' + id).set(novoUsuario);
-                localStorage.setItem('king_user', JSON.stringify(novoUsuario));
-                location.reload();
+                document.getElementById('aba-posts').classList.add('active');
+                document.getElementById('view-title').innerText = "FEED";
+                carregarPosts();
             }
         }
 
-        function abrirPerfil() {
-            document.getElementById('edit-nome').value = currentUser.nome;
-            document.getElementById('edit-foto-url').value = currentUser.foto || "";
-            document.getElementById('edit-foto-preview').src = currentUser.foto || "";
-            document.getElementById('perfil-modal').style.display = 'flex';
-        }
-
-        async function salvarPerfil() {
-            const url = document.getElementById('edit-foto-url').value.trim();
-            const nome = document.getElementById('edit-nome').value.trim();
-            
-            const updates = { nome: nome, foto: url };
-            await fb.ref('users/' + currentUser.id).update(updates);
-            
-            // Atualiza local
-            currentUser.nome = nome;
-            currentUser.foto = url;
-            localStorage.setItem('king_user', JSON.stringify(currentUser));
-            alert("Perfil salvo!");
+        async function auth() {
+            const u = document.getElementById('login-user').value.trim().toLowerCase();
+            const p = document.getElementById('login-pass').value;
+            if(!u || !p) return;
+            const snap = await fb.ref('users/' + u).once('value');
+            let user = snap.exists() ? snap.val() : { id: u, nome: u, pass: p, foto: "" };
+            if(snap.exists() && snap.val().pass !== p) return alert("Senha incorreta");
+            if(!snap.exists()) await fb.ref('users/' + u).set(user);
+            localStorage.setItem('king_user', JSON.stringify(user));
             location.reload();
         }
 
-        function carregarMinhasConversas() {
-            fb.ref(`conversas/${currentUser.id}`).on('value', snap => {
-                const lista = document.getElementById('chats-lista');
-                lista.innerHTML = "";
-                snap.forEach(child => {
-                    const c = child.val();
-                    const alvoId = child.key;
-                    const chatID = [currentUser.id, alvoId].sort().join("_");
+        function abrirModalPost() { document.getElementById('post-modal-upload').style.display = 'flex'; }
+        function fecharModalPost() { document.getElementById('post-modal-upload').style.display = 'none'; limparUpload(); }
 
-                    const item = document.createElement('div');
-                    item.className = 'chat-item';
-                    item.innerHTML = `
-                        <img src="${c.foto}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1144/1144760.png'">
-                        <div class="chat-info" onclick="abrirChat('${alvoId}','${c.nome}','${c.foto}')">
-                            <h4>${c.nome}</h4>
-                            <p id="last-${alvoId}">...</p>
-                        </div>
-                        <div id="badge-${alvoId}"></div>
-                    `;
-                    lista.appendChild(item);
+        function previewMedia() {
+            const file = document.getElementById('file-input').files[0];
+            const img = document.getElementById('pre-img');
+            const vid = document.getElementById('pre-video');
+            img.style.display = vid.style.display = 'none';
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    if (file.type.includes('image')) { img.src = e.target.result; img.style.display = 'block'; }
+                    else { vid.src = e.target.result; vid.style.display = 'block'; }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
 
-                    fb.ref(`mensagens/${chatID}`).on('value', mSnap => {
-                        let totalNaoLidas = 0;
-                        let lastTxt = "Sem mensagens";
-                        mSnap.forEach(m => {
-                            const d = m.val();
-                            lastTxt = d.texto;
-                            if(d.sender !== currentUser.id && !d.lida) totalNaoLidas++;
-                        });
-                        if(document.getElementById(`last-${alvoId}`)) {
-                            document.getElementById(`last-${alvoId}`).innerText = lastTxt;
-                            document.getElementById(`badge-${alvoId}`).innerHTML = totalNaoLidas > 0 ? `<span class="badge-count">${totalNaoLidas}</span>` : "";
-                        }
+        // --- FUNÇÃO DE PROCESSAMENTO COM ÁUDIO E PORCENTAGEM ---
+        async function processVideoResizer(file) {
+            return new Promise((resolve, reject) => {
+                const video = document.createElement('video');
+                video.src = URL.createObjectURL(file);
+                video.muted = false; // Necessário para capturar áudio
+                video.crossOrigin = "anonymous";
+                
+                video.onloadedmetadata = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Resolução para caber no Firebase (Baixa para vídeos longos)
+                    canvas.width = 480; 
+                    canvas.height = 270;
+
+                    // Captura Imagem do Canvas + Áudio do Vídeo
+                    const videoStream = canvas.captureStream(15);
+                    const audioContext = new AudioContext();
+                    const source = audioContext.createMediaElementSource(video);
+                    const destination = audioContext.createMediaStreamDestination();
+                    source.connect(destination);
+                    source.connect(audioContext.destination);
+
+                    const combinedStream = new MediaStream([
+                        ...videoStream.getVideoTracks(),
+                        ...destination.stream.getAudioTracks()
+                    ]);
+
+                    const recorder = new MediaRecorder(combinedStream, { 
+                        mimeType: 'video/webm;codecs=vp8,opus', 
+                        videoBitsPerSecond: 400000 
                     });
+
+                    const chunks = [];
+                    recorder.ondataavailable = e => chunks.push(e.data);
+                    recorder.onstop = () => {
+                        const blob = new Blob(chunks, { type: 'video/webm' });
+                        const reader = new FileReader();
+                        reader.readAsDataURL(blob);
+                        reader.onloadend = () => resolve(reader.result);
+                    };
+
+                    const btn = document.getElementById('btn-pub');
+                    const duration = Math.min(video.duration, 180);
+
+                    video.play();
+                    recorder.start();
+
+                    const drawFrame = () => {
+                        if (video.paused || video.ended || video.currentTime >= 180) { 
+                            recorder.stop(); 
+                            return; 
+                        }
+                        
+                        let percent = Math.round((video.currentTime / duration) * 100);
+                        btn.innerText = `PROCESSANDO ${percent}%`;
+                        btn.style.background = `linear-gradient(to right, #4CAF50 ${percent}%, #fff ${percent}%)`;
+
+                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        requestAnimationFrame(drawFrame);
+                    };
+                    drawFrame();
+                };
+                video.onerror = () => reject("Erro no vídeo.");
+            });
+        }
+
+        async function enviarPostCompleto() {
+            const btn = document.getElementById('btn-pub');
+            const legenda = document.getElementById('post-legenda').value;
+            const file = document.getElementById('file-input').files[0];
+            if(!legenda && !file) return;
+
+            btn.disabled = true;
+            btn.innerText = "INICIANDO...";
+
+            try {
+                let mediaData = "";
+                let tipo = "texto";
+
+                if(file) {
+                    tipo = file.type.includes('image') ? 'foto' : 'video';
+                    if(tipo === 'foto') {
+                        mediaData = await new Promise(res => {
+                            const r = new FileReader(); r.readAsDataURL(file);
+                            r.onload = e => {
+                                const tempImg = new Image(); tempImg.src = e.target.result;
+                                tempImg.onload = () => {
+                                    const canvas = document.createElement('canvas');
+                                    const scale = Math.min(1, 640 / tempImg.width);
+                                    canvas.width = tempImg.width * scale;
+                                    canvas.height = tempImg.height * scale;
+                                    canvas.getContext('2d').drawImage(tempImg, 0, 0, canvas.width, canvas.height);
+                                    res(canvas.toDataURL('image/jpeg', 0.6));
+                                }
+                            }
+                        });
+                    } else {
+                        mediaData = await processVideoResizer(file);
+                    }
+                }
+
+                if (mediaData && mediaData.length > 10 * 1024 * 1024) {
+                    alert("Vídeo longo demais para o servidor!");
+                    btn.innerText = "PUBLICAR";
+                    btn.disabled = false;
+                    btn.style.background = "#fff";
+                    return;
+                }
+
+                btn.innerText = "ENVIANDO...";
+                await fb.ref('posts').push({
+                    uid: currentUser.id, nome: currentUser.nome, foto: currentUser.foto || "",
+                    legenda: legenda, media: mediaData, tipo: tipo, data: Date.now()
+                });
+                fecharModalPost();
+            } catch (e) { 
+                alert("Erro ao postar."); 
+            }
+            btn.innerText = "PUBLICAR"; btn.disabled = false;
+            btn.style.background = "#fff";
+        }
+
+        function carregarPosts() {
+            fb.ref('posts').on('value', snap => {
+                const feed = document.getElementById('feed-posts');
+                feed.innerHTML = "";
+                let posts = [];
+                snap.forEach(p => { let val = p.val(); val.id = p.key; posts.push(val); });
+                posts.reverse().forEach(p => {
+                    let mediaHTML = p.tipo === 'foto' ? `<img src="${p.media}" class="post-media">` : 
+                        `<video src="${p.media}" class="post-media" controls></video>`;
+                    let delBtn = p.uid === currentUser.id ? `<div class="btn-del" onclick="apagarPost('${p.id}')">APAGAR</div>` : "";
+                    feed.innerHTML += `<div class="post-card">${delBtn}<div class="post-header"><b>${p.nome}</b></div>${p.media ? mediaHTML : ""}<div class="post-footer"><b>${p.nome}</b> ${p.legenda}</div></div>`;
                 });
             });
         }
 
+        function apagarPost(id) { if(confirm("Apagar?")) fb.ref('posts/' + id).remove(); }
+        function limparUpload() {
+            document.getElementById('post-legenda').value = "";
+            document.getElementById('file-input').value = "";
+            document.getElementById('pre-img').style.display = 'none';
+            document.getElementById('pre-video').style.display = 'none';
+        }
+
+        function carregarConversas() {
+            fb.ref(`conversas/${currentUser.id}`).on('value', snap => {
+                const lista = document.getElementById('chats-lista');
+                lista.innerHTML = "";
+                snap.forEach(c => {
+                    const d = c.val();
+                    lista.innerHTML += `<div class="chat-item" onclick="abrirChat('${c.key}','${d.nome}','${d.foto}')">
+                        <img src="${d.foto || 'https://cdn-icons-png.flaticon.com/512/1144/1144760.png'}">
+                        <div><h4>${d.nome}</h4><p>Clique para conversar</p></div></div>`;
+                });
+            });
+        }
+
+        let chatAtivo = null;
         function abrirChat(id, nome, foto) {
-            chatAtivoId = id;
-            document.getElementById('chat-nome-topo').innerText = nome;
-            document.getElementById('chat-foto-topo').src = foto;
+            chatAtivo = id;
+            document.getElementById('chat-nome-title').innerText = nome;
             document.getElementById('chat-screen').style.display = 'flex';
-            ouvirMensagens(id);
-        }
-
-        function fecharChat() {
-            if(chatAtivoId) fb.ref(`mensagens/${[currentUser.id, chatAtivoId].sort().join("_")}`).off();
-            document.getElementById('chat-screen').style.display = 'none';
-            chatAtivoId = null;
-        }
-
-        function ouvirMensagens(alvoId) {
-            const chatID = [currentUser.id, alvoId].sort().join("_");
+            const chatID = [currentUser.id, id].sort().join("_");
             fb.ref(`mensagens/${chatID}`).on('value', snap => {
                 const box = document.getElementById('chat-messages');
                 box.innerHTML = "";
                 snap.forEach(m => {
                     const msg = m.val();
-                    const isMe = msg.sender === currentUser.id;
-                    if(!isMe && !msg.lida) fb.ref(`mensagens/${chatID}/${m.key}`).update({lida: true});
-                    const check = isMe ? (msg.lida ? "<span class='status-v v-blue'>VV</span>" : "<span class='status-v'>V</span>") : "";
-                    box.innerHTML += `<div class="msg-bubble ${isMe ? 'msg-me' : 'msg-them'}">${msg.texto} ${check}</div>`;
+                    box.innerHTML += `<div class="msg ${msg.sender === currentUser.id ? 'msg-me' : 'msg-them'}">${msg.texto}</div>`;
                 });
                 box.scrollTop = box.scrollHeight;
             });
         }
-
+        function fecharChat() { document.getElementById('chat-screen').style.display = 'none'; }
         async function enviarMensagem() {
-            const input = document.getElementById('msg-input');
-            if(!input.value.trim() || !chatAtivoId) return;
-            const chatID = [currentUser.id, chatAtivoId].sort().join("_");
-            await fb.ref(`mensagens/${chatID}`).push({
-                texto: input.value,
-                sender: currentUser.id,
-                lida: false,
-                time: Date.now()
-            });
-            input.value = "";
+            const txt = document.getElementById('msg-input').value;
+            if(!txt || !chatAtivo) return;
+            const chatID = [currentUser.id, chatAtivo].sort().join("_");
+            await fb.ref(`mensagens/${chatID}`).push({ texto: txt, sender: currentUser.id });
+            document.getElementById('msg-input').value = "";
         }
-
-        async function buscarUsuario() {
-            const id = prompt("Digite o nome de usuário que deseja chamar:").toLowerCase();
-            if(!id || id === currentUser.id) return;
-            const snap = await fb.ref('users/' + id).once('value');
-            if(snap.exists()) {
-                const alvo = snap.val();
-                await fb.ref(`conversas/${currentUser.id}/${id}`).set({ nome: alvo.nome, foto: alvo.foto });
-                await fb.ref(`conversas/${id}/${currentUser.id}`).set({ nome: currentUser.nome, foto: currentUser.foto });
-            } else { alert("Usuário não encontrado!"); }
+        function novoChat() {
+            const id = prompt("Usuário:").toLowerCase();
+            if(id) fb.ref(`conversas/${currentUser.id}/${id}`).set({ nome: id, foto: "" });
         }
-
-        function logout() { localStorage.clear(); location.reload(); }
     </script>
 </body>
 </html>
