@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KINGConnect ELITE v34</title>
+    <title>KINGConnect ELITE v35</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
@@ -34,6 +34,9 @@
         .content { flex: 1; overflow-y: auto; padding-bottom: 80px; }
         .aba { display: none; width: 100%; height: 100%; }
         .aba.active { display: block; }
+
+        /* Banner de Capa */
+        .perfil-capa-container { width: 100%; height: 140px; background: #e0e0e0; position: relative; background-size: cover; background-position: center; }
 
         /* Cards do Feed */
         .post-card { max-width: 350px; margin: 12px auto; border: 1px solid #eee; border-radius: 12px; background: #fff; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
@@ -69,14 +72,14 @@
         .msg-meta { font-size: 10px; align-self: flex-end; margin-top: 4px; display: flex; align-items: center; gap: 3px; opacity: 0.7; }
 
         /* Componentes de Status ✓ e ✓✓ */
-        .check-icon { font-size: 11px; }
+        .check-icon { font-size: 11px; font-weight: bold; display: inline-block; }
         .check-icon.read { color: #34b7f1; }
 
         /* Modais */
         .fab { position: absolute; bottom: 85px; right: 20px; width: 55px; height: 55px; background: #000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; z-index: 90; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
         .modal-box { background: #fff; padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; max-height: 80vh; overflow-y: auto; }
-        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; outline: none; }
+        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; outline: none; }
         
         /* Lista de Usuários em Modais */
         .user-list-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #eee; }
@@ -120,10 +123,12 @@
         <div id="aba-feed" class="aba active content"></div>
         
         <div id="aba-perfil" class="aba content">
-            <div style="text-align:center; padding:20px; border-bottom:1px solid #eee;">
-                <img id="view-foto" src="" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid #000;">
+            <div id="view-capa" class="perfil-capa-container"></div>
+            <div style="text-align:center; padding:20px; border-bottom:1px solid #eee; margin-top:-50px; position:relative;">
+                <img id="view-foto" src="" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid #fff; background:#fff;">
                 <h2 id="view-nome">...</h2>
                 <p id="view-at" style="color:#888;">@...</p>
+                <p id="view-privacidade" style="font-size:11px; margin-top:4px; color:#555; font-weight:bold;">Conta Pública</p>
                 
                 <div class="profile-stats">
                     <div class="stat-box"> <span id="qtd-posts">0</span> posts </div>
@@ -131,15 +136,16 @@
                     <div class="stat-box" onclick="abrirModalRelacoes('seguindo')"> <span id="qtd-seguindo">0</span> seguindo </div>
                 </div>
 
-                <button onclick="abrirEdit()" style="padding:6px 15px; border-radius:20px; border:1px solid #ddd; background:none; font-size:11px; font-weight:bold; cursor:pointer;">Editar Perfil</button>
+                <button onclick="abrirEdit()" style="padding:6px 15px; border-radius:20px; border:1px solid #ddd; background:#fff; font-size:11px; font-weight:bold; cursor:pointer;">Editar Perfil / Capa</button>
             </div>
             <div id="p-grid" class="grid"></div>
         </div>
 
         <div id="aba-visita" class="aba content">
             <div onclick="switchTab('busca')" style="padding:15px; font-weight:bold; cursor:pointer; border-bottom:1px solid #eee;">⬅ VOLTAR À BUSCA</div>
-            <div style="text-align:center; padding:20px; border-bottom:1px solid #eee;">
-                <img id="visita-foto" src="" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid #000;">
+            <div id="visita-capa" class="perfil-capa-container"></div>
+            <div style="text-align:center; padding:20px; border-bottom:1px solid #eee; margin-top:-50px; position:relative;">
+                <img id="visita-foto" src="" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid #fff; background:#fff;">
                 <h2 id="visita-nome">...</h2>
                 <p id="visita-at" style="color:#888; margin-bottom:12px;">@...</p>
                 
@@ -204,11 +210,24 @@
     </div></div>
 
     <div id="modal-edit" class="modal"><div class="modal-box">
-        <h3>Editar Perfil</h3>
+        <h3>Editar Dados</h3>
+        <label style="font-size:12px; font-weight:bold; color:#555;">Nome de exibição:</label>
         <input type="text" id="edit-nome" placeholder="Nome Exibido">
+        
+        <label style="font-size:12px; font-weight:bold; color:#555;">Foto de Perfil:</label>
         <input type="file" accept="image/*" onchange="converte(this, 'perfil-foto')">
-        <button onclick="salvarPerfil()" style="width:100%; padding:14px; background:#000; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">SALVAR</button>
-        <p onclick="fecharModais()" style="text-align:center; margin-top:15px; cursor:pointer;">Fechar</p>
+        
+        <label style="font-size:12px; font-weight:bold; color:#555;">Foto da Capa:</label>
+        <input type="file" accept="image/*" onchange="converte(this, 'perfil-capa')">
+        
+        <label style="font-size:12px; font-weight:bold; color:#555;">Privacidade do Perfil:</label>
+        <select id="edit-privacidade">
+            <option value="publica">Pública (Qualquer um vê os posts)</option>
+            <option value="privada">Privada (Só seguidores aprovados vêem os posts)</option>
+        </select>
+
+        <button onclick="salvarPerfil()" style="width:100%; padding:14px; background:#000; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:bold; margin-top:10px;">SALVAR</button>
+        <p onclick="fecharModais()" style="text-align:center; margin-top:15px; cursor:pointer; font-weight:bold; color:#666;">Fechar</p>
     </div></div>
 
     <div id="modal-config" class="modal"><div class="modal-box" style="text-align:center;">
@@ -225,7 +244,7 @@
         const fb = firebase.database();
 
         let meuUser = JSON.parse(localStorage.getItem('king_session'));
-        let tM = "", tP = "", chatAtivo = null, usuarioVisitado = null;
+        let tM = "", tP = "", tC = "", chatAtivo = null, usuarioVisitado = null;
 
         function toggleAuth(m) {
             document.getElementById('box-login').style.display = m==='login'?'block':'none';
@@ -237,7 +256,7 @@
             const nome = document.getElementById('reg-nome').value.trim();
             const pass = document.getElementById('reg-pass').value;
             if(!id || !nome || !pass) return alert("Preencha todos os campos!");
-            fb.ref('usuarios/'+id).set({ id, nome, pass, foto: '' }).then(() => logar({ id, nome, pass, foto: '' }));
+            fb.ref('usuarios/'+id).set({ id, nome, pass, foto: '', capa: '', privacidade: 'publica' }).then(() => logar({ id, nome, pass, foto: '', capa: '', privacidade: 'publica' }));
         }
 
         function fazerLogin() {
@@ -273,10 +292,10 @@
             if(t==='chat') carregarConversas();
         }
 
-        // CONTROLADOR DO FEED DE SEGUIDORES
+        // CONTROLADOR DO FEED (Exclui postagens do usuário conectado)
         function carregarFeed() {
             fb.ref('seguindo/' + meuUser.id).once('value', snapSeguindo => {
-                let listaSeguidos = [meuUser.id];
+                let listaSeguidos = [];
                 snapSeguindo.forEach(s => { if(s.val() === true) listaSeguidos.push(s.key); });
 
                 fb.ref('posts').on('value', snap => {
@@ -284,13 +303,16 @@
                     let posts = [];
                     snap.forEach(p => { 
                         let dados = p.val();
-                        if(listaSeguidos.includes(dados.uid)) posts.push({key: p.key, ...dados}); 
+                        // Filtragem: adiciona se o ID estiver nos seguidos e remove se for o próprio uid logado
+                        if(listaSeguidos.includes(dados.uid) && dados.uid !== meuUser.id) {
+                            posts.push({key: p.key, ...dados}); 
+                        }
                     });
                     if(posts.length === 0) {
-                        div.innerHTML = `<p style="text-align:center; margin-top:40px; color:#999;">Siga perfis na aba de Busca para ver postagens.</p>`;
+                        div.innerHTML = `<p style="text-align:center; margin-top:40px; color:#999; padding:20px;">O feed está limpo. Siga perfis na busca para ver novos posts!</p>`;
                         return;
                     }
-                    posts.reverse().forEach(post => { div.innerHTML += renderPost(post.key, post, post.uid === meuUser.id); });
+                    posts.reverse().forEach(post => { div.innerHTML += renderPost(post.key, post, false); });
                 });
             });
         }
@@ -298,10 +320,19 @@
         function renderPost(id, p, meu) {
             const possuiMedia = p && p.media;
             const ehVideo = possuiMedia && typeof p.media === 'string' && p.media.includes('video');
+            
+            // Tratamento do contador de likes e estado de curtida
+            let numLikes = 0;
+            let jaCurtiu = false;
+            if(p.likesRef) {
+                numLikes = Object.keys(p.likesRef).length;
+                if(p.likesRef[meuUser.id]) jaCurtiu = true;
+            }
+
             return `
             <div class="post-card">
                 <div style="padding:10px; font-size:11px; display:flex; justify-content:space-between; align-items:center;">
-                    <b>@${p.uid || 'usuario'}</b>
+                    <b style="cursor:pointer;" onclick="visitarPerfil('${p.uid}')">@${p.uid || 'usuario'}</b>
                     ${meu ? `<span onclick="apagar('${id}')" style="color:red; cursor:pointer; font-weight:bold;">Remover</span>` : ''}
                 </div>
                 <div class="media-container">
@@ -309,9 +340,22 @@
                 </div>
                 <div style="padding:10px; font-size:13px;"><b>${p.nome || ''}</b> ${p.legenda || ''}</div>
                 <div style="padding:10px; border-top:1px solid #eee; display:flex; align-items:center; gap:5px;">
-                    <span onclick="like('${id}')" style="cursor:pointer; font-size:16px;">❤️</span> <span style="font-size:12px;">${p.likes || 0}</span>
+                    <span onclick="alternarLike('${id}')" style="cursor:pointer; font-size:16px; filter: ${jaCurtiu ? 'none' : 'grayscale(100%)'}">❤️</span> 
+                    <span style="font-size:12px; font-weight:bold;">${numLikes}</span>
                 </div>
             </div>`;
+        }
+
+        // SISTEMA DE CURTIDA ÚNICA (LIKE / UNLIKE)
+        function alternarLike(postId) {
+            const refLike = fb.ref(`posts/${postId}/likesRef/${meuUser.id}`);
+            refLike.once('value', snap => {
+                if(snap.exists()) {
+                    refLike.remove(); // Desmarcar curtida
+                } else {
+                    refLike.set(true); // Curtir apenas uma vez
+                }
+            });
         }
 
         // ENCONTRAR E VISITAR PERFIS
@@ -348,6 +392,11 @@
                 document.getElementById('visita-at').innerText = "@" + uid;
                 document.getElementById('visita-foto').src = u.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
                 
+                // Renderização da Capa Visitada
+                const vCapa = document.getElementById('visita-capa');
+                if(u.capa) vCapa.style.backgroundImage = `url('${u.capa}')`;
+                else vCapa.style.backgroundImage = "none";
+
                 document.getElementById('btn-visita-chat').onclick = () => { abrirChat(uid); switchTab('chat'); };
 
                 // Atualizar Contadores da Visita
@@ -364,10 +413,13 @@
                     document.getElementById('v-qtd-seguindo').innerText = c;
                 });
 
-                // Trava / Destrava de Perfil Privado
+                // Trava / Destrava por Conta Pública ou Privada
+                const isPrivada = u.privacidade === 'privada';
+
                 fb.ref(`seguindo/${meuUser.id}/${uid}`).on('value', s => {
                     const seguindo = s.val() === true;
                     const btn = document.getElementById('btn-visita-seguir');
+                    
                     if(seguindo) {
                         btn.innerText = "Seguindo"; btn.className = "btn-seguir seguindo";
                         document.getElementById('visita-bloqueio').style.display = "none";
@@ -375,8 +427,16 @@
                         carregarGridOutro(uid);
                     } else {
                         btn.innerText = "Seguir"; btn.className = "btn-seguir nao-seguindo";
-                        document.getElementById('visita-bloqueio').style.display = "block";
-                        document.getElementById('visita-grid').style.display = "none";
+                        
+                        if(isPrivada) {
+                            document.getElementById('visita-bloqueio').style.display = "block";
+                            document.getElementById('visita-grid').style.display = "none";
+                        } else {
+                            // Se a conta for pública, mostra posts mesmo sem seguir!
+                            document.getElementById('visita-bloqueio').style.display = "none";
+                            document.getElementById('visita-grid').style.display = "grid";
+                            carregarGridOutro(uid);
+                        }
                     }
                 });
             });
@@ -397,7 +457,8 @@
         }
 
         function carregarGridOutro(uid) {
-            fb.ref('posts').once('value', snap => {
+            fb.ref('posts').on('value', snap => {
+                if(usuarioVisitado !== uid) return;
                 const grid = document.getElementById('visita-grid'); grid.innerHTML = "";
                 snap.forEach(p => {
                     const post = p.val();
@@ -411,9 +472,25 @@
 
         // MEU PERFIL E RELAÇÕES DE SEGUIDORES
         function carregarPerfil() {
-            document.getElementById('view-nome').innerText = meuUser.nome;
-            document.getElementById('view-at').innerText = "@" + meuUser.id;
-            document.getElementById('view-foto').src = meuUser.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+            fb.ref('usuarios/'+meuUser.id).once('value', uSnap => {
+                const u = uSnap.val();
+                if(u) {
+                    meuUser = u;
+                    localStorage.setItem('king_session', JSON.stringify(u));
+                }
+                
+                document.getElementById('view-nome').innerText = meuUser.nome;
+                document.getElementById('view-at').innerText = "@" + meuUser.id;
+                document.getElementById('view-foto').src = meuUser.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                
+                // Mostrar texto de privacidade na bio
+                document.getElementById('view-privacidade').innerText = meuUser.privacidade === 'privada' ? "🔒 Conta Privada" : "🌐 Conta Pública";
+
+                // Atualizar elemento de Capa Própria
+                const mCapa = document.getElementById('view-capa');
+                if(meuUser.capa) mCapa.style.backgroundImage = `url('${meuUser.capa}')`;
+                else mCapa.style.backgroundImage = "none";
+            });
             
             fb.ref('posts').on('value', snap => {
                 const grid = document.getElementById('p-grid'); grid.innerHTML = "";
@@ -428,6 +505,8 @@
                 });
                 document.getElementById('qtd-posts').innerText = count;
             });
+
+            fb.ref('followers_count_fix/'+meuUser.id).set(true); // Trigger preventivo
 
             fb.ref('seguidores/'+meuUser.id).on('value', snap => {
                 let c = 0; snap.forEach(s => { if(s.val()===true) c++; });
@@ -456,7 +535,7 @@
                 });
 
                 if(promises.length === 0) {
-                    corpo.innerHTML = "<p style='color:#999; text-align:center;'>Nenhum usuário encontrado nesta lista.</p>";
+                    corpo.innerHTML = "<p style='color:#999; text-align:center;'>Nenhum usuário nesta lista.</p>";
                     return;
                 }
 
@@ -479,7 +558,7 @@
             });
         }
 
-        // SISTEMA DE CHAT AVANÇADO (COM VISTOS E INFOS COMPLETAS)
+        // CHAT (CORREÇÃO DE CONTAGEM E FILTRO DE V/VV CORRETO)
         function carregarConversas() {
             fb.ref('conversas/'+meuUser.id).on('value', snapConversas => {
                 const boxLista = document.getElementById('lista-conversas'); boxLista.innerHTML = "";
@@ -488,7 +567,7 @@
                 snapConversas.forEach(c => { caminhos.push(c.key); });
 
                 if(caminhos.length === 0) {
-                    boxLista.innerHTML = "<p style='text-align:center; margin-top:40px; color:#999;'>Nenhuma conversa aberta.</p>";
+                    boxLista.innerHTML = "<p style='text-align:center; margin-top:40px; color:#999;'>Nenhuma conversa ativa.</p>";
                     return;
                 }
 
@@ -507,7 +586,8 @@
                                 let naoLidas = 0;
                                 countSnap.forEach(m => {
                                     let msg = m.val();
-                                    if(msg.de !== meuUser.id && msg.lida !== true) naoLidas++;
+                                    // Conta apenas as mensagens enviadas PELA OUTRA PESSOA que não foram lidas
+                                    if(msg.de === idAlvo && msg.lida !== true) naoLidas++;
                                 });
 
                                 let itemID = `item-chat-${idAlvo}`;
@@ -516,6 +596,7 @@
 
                                 const fotoUrl = perfilAlvo.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
                                 
+                                // Regra do V / VV: Apenas na mensagem que EU mandei!
                                 let vistoIcon = "";
                                 if(msgData && msgData.de === meuUser.id) {
                                     if(msgData.lida === true) vistoIcon = "<span class='check-icon read'>✓✓</span> ";
@@ -545,21 +626,29 @@
         function escutarMensagensGlobais() {
             fb.ref('conversas/'+meuUser.id).on('value', snap => {
                 let contagemTotal = 0;
-                let promises = [];
+                let caminhos = [];
+                snap.forEach(c => { caminhos.push(c.key); });
 
-                snap.forEach(c => {
-                    const idAlvo = c.key;
+                if(caminhos.length === 0) {
+                    document.getElementById('badge-total-conversas').style.display = 'none';
+                    return;
+                }
+
+                let promises = caminhos.map(idAlvo => {
                     const chatID = meuUser.id < idAlvo ? meuUser.id+"_"+idAlvo : idAlvo+"_"+meuUser.id;
-                    promises.push(fb.ref('chats/'+chatID).once('value'));
+                    return fb.ref('chats/'+chatID).once('value').then(chatSnap => {
+                        let subCont = 0;
+                        chatSnap.forEach(m => {
+                            let msg = m.val();
+                            // Conta apenas se veio do alvo e está falsa
+                            if(msg.de === idAlvo && msg.lida !== true) subCont++;
+                        });
+                        return subCont;
+                    });
                 });
 
                 Promise.all(promises).then(resultados => {
-                    resultados.forEach(chatSnap => {
-                        chatSnap.forEach(m => {
-                            let msg = m.val();
-                            if(msg.de !== meuUser.id && msg.lida !== true) contagemTotal++;
-                        });
-                    });
+                    contagemTotal = resultados.reduce((acc, curr) => acc + curr, 0);
                     const b = document.getElementById('badge-total-conversas');
                     if(contagemTotal > 0) { b.innerText = contagemTotal; b.style.display = 'block'; }
                     else { b.style.display = 'none'; }
@@ -584,11 +673,12 @@
                     const info = m.val();
                     const msgKey = m.key;
 
-                    // Marca mensagens recebidas como lidas dinamicamente
-                    if(info.de !== meuUser.id && info.lida !== true) {
+                    // Marca mensagens que a outra pessoa mandou como lidas
+                    if(info.de === id && info.lida !== true) {
                         fb.ref(`chats/${chatID}/${msgKey}`).update({ lida: true });
                     }
 
+                    // Ícone de visto apenas para as minhas mensagens na janela ativa
                     let vistoHtml = "";
                     if(info.de === meuUser.id) {
                         if(info.lida === true) vistoHtml = "<span class='check-icon read'>✓✓</span>";
@@ -622,14 +712,13 @@
             input.value = "";
         }
 
-        // AUXILIARES DE ARQUIVOS E ENVIO FIXADOS (Imagens Pesadas Bloqueadas)
+        // CONVERSOR MULTIUSO (Perfil, Capas e Postagens)
         function converte(input, t) {
             const file = input.files[0];
             if (!file) return;
             
-            // Tratamento preventivo para arquivos gigantescos em Base64
             if(file.size > 2.5 * 1024 * 1024) {
-                alert("O arquivo é muito grande! Escolha fotos ou vídeos mais curtos de até 2.5MB.");
+                alert("O arquivo excede o limite. Selecione mídias de até 2.5MB.");
                 input.value = "";
                 return;
             }
@@ -638,19 +727,19 @@
             r.onload = e => { 
                 if(t==='midia') tM = e.target.result; 
                 if(t==='perfil-foto') tP = e.target.result; 
+                if(t==='perfil-capa') tC = e.target.result; // Salva string da capa
             };
             r.readAsDataURL(file);
         }
 
         function enviarPost() {
-            if(!tM) return alert("Por favor, selecione uma imagem ou vídeo válido primeiro!");
-            
+            if(!tM) return alert("Selecione um arquivo de mídia primeiro!");
             const btn = document.getElementById('btn-publicar');
             btn.disabled = true; btn.innerText = "PUBLICANDO...";
 
             fb.ref('posts').push({
                 uid: meuUser.id, nome: meuUser.nome, media: tM,
-                legenda: document.getElementById('post-legenda').value, likes: 0, data: Date.now()
+                legenda: document.getElementById('post-legenda').value, data: Date.now()
             }).then(() => { 
                 fecharModais(); 
                 document.getElementById('post-legenda').value = "";
@@ -658,17 +747,25 @@
                 tM = ""; 
                 carregarFeed(); 
             }).catch(err => {
-                alert("Erro ao salvar dados no Firebase. Verifique sua conexão ou tamanho do arquivo.");
+                alert("Falha ao salvar dados.");
                 btn.disabled = false; btn.innerText = "PUBLICAR";
             });
         }
 
         function salvarPerfil() {
             const n = document.getElementById('edit-nome').value;
-            if(n) meuUser.nome = n; if(tP) meuUser.foto = tP;
+            const priv = document.getElementById('edit-privacidade').value;
+            
+            if(n) meuUser.nome = n; 
+            if(tP) meuUser.foto = tP;
+            if(tC) meuUser.capa = tC; // Armazena a foto da capa modificada
+            meuUser.privacidade = priv; // Grava se é publica/privada
+
             fb.ref('usuarios/'+meuUser.id).update(meuUser).then(() => { 
                 localStorage.setItem('king_session', JSON.stringify(meuUser)); 
-                fecharModais(); carregarPerfil(); 
+                fecharModais(); 
+                tP = ""; tC = "";
+                carregarPerfil(); 
             });
         }
 
@@ -680,11 +777,15 @@
             });
         }
 
-        function like(id) { fb.ref('posts/'+id+'/likes').transaction(c => (c || 0) + 1); }
         function apagar(id) { if(confirm("Apagar postagem?")) fb.ref('posts/'+id).remove().then(() => { if(document.getElementById('aba-detalhes').classList.contains('active')) verDetalhes(); }); }
-        
         function abrirUpload() { btn = document.getElementById('btn-publicar'); btn.disabled = false; btn.innerText = "PUBLICAR"; tM = ""; document.getElementById('modal-post').style.display='flex'; }
-        function abrirEdit() { document.getElementById('modal-edit').style.display='flex'; }
+        
+        function abrirEdit() { 
+            document.getElementById('edit-nome').value = meuUser.nome || "";
+            document.getElementById('edit-privacidade').value = meuUser.privacidade || "publica";
+            document.getElementById('modal-edit').style.display='flex'; 
+        }
+        
         function abrirConfig() { document.getElementById('modal-config').style.display='flex'; }
         function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
         function fecharChat() { document.getElementById('janela-chat').style.display = 'none'; chatAtivo = null; carregarConversas(); }
