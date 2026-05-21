@@ -11,18 +11,12 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: #fff; color: #000; height: 100vh; display: flex; overflow: hidden; }
 
-        /* Tela de Autenticação - Tema Escuro (Fundo #121212) */
+        /* Tela de Autenticação */
         #tela-login { position: fixed; inset: 0; background: #121212; z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .login-box { width: 100%; max-width: 320px; text-align: center; }
         .login-box h2 { color: #fff; font-size: 24px; font-weight: bold; margin-bottom: 25px; letter-spacing: 1px; }
-        
-        /* Inputs Estilo Capsula Arredondada */
         .input-login { width: 100%; padding: 14px 20px; margin: 8px 0; border: none; border-radius: 30px; background: #e8f0fe; color: #000; font-weight: bold; text-align: center; font-size: 15px; outline: none; }
-        .input-login::placeholder { color: #757575; font-weight: bold; }
-        
-        /* Botão Arredondado Branco */
         .btn-login { width: auto; min-width: 140px; padding: 10px 30px; margin-top: 15px; background: #fff; color: #000; border: none; border-radius: 30px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
-        .btn-login:active { transform: scale(0.98); opacity: 0.9; }
 
         /* Nav Sidebar / Mobile Bottom Nav */
         #sidebar { width: 80px; background: #000; display: flex; flex-direction: column; align-items: center; padding-top: 20px; gap: 25px; flex-shrink: 0; z-index: 100; }
@@ -33,14 +27,14 @@
         .nav-btn.active { opacity: 1; border-bottom: 2px solid #fff; padding-bottom: 5px; }
         .nav-btn img { width: 24px; filter: invert(1); display: block; margin: 0 auto 5px; }
 
-        /* Main Content Area */
+        /* Main Area */
         .main { flex: 1; display: flex; flex-direction: column; background: #fff; position: relative; overflow: hidden; }
         header { background: #000; color: #fff; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; height: 60px; }
         .content { flex: 1; overflow-y: auto; padding-bottom: 80px; }
         .aba { display: none; width: 100%; height: 100%; }
         .aba.active { display: block; }
 
-        /* Post Card Styles */
+        /* Post Card */
         .post-card { max-width: 350px; margin: 12px auto; border: 1px solid #eee; border-radius: 12px; background: #fff; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .media-container { width: 100%; background: #000; position: relative; min-height: 200px; display: flex; justify-content: center; align-items: center; }
         .post-media { max-width: 100%; max-height: 380px; display: block; }
@@ -49,7 +43,11 @@
         .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 8px; }
         .grid-item { aspect-ratio: 1/1; cursor: pointer; background: #000; overflow: hidden; position: relative; border-radius: 4px; }
         .grid-item img, .grid-item video { width: 100%; height: 100%; object-fit: cover; }
-        .btn-capa-edit { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.7); color: #fff; font-size: 9px; padding: 3px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.3); z-index: 10; font-weight: bold; }
+        
+        /* Botões de Seguir / Ações */
+        .btn-seguir { padding: 6px 20px; border-radius: 20px; border: none; font-weight: bold; font-size: 13px; cursor: pointer; transition: 0.2s; }
+        .btn-seguir.nao-seguindo { background: #000; color: #fff; }
+        .btn-seguir.seguindo { background: #eee; color: #000; }
 
         /* Floating Action Button & Modals */
         .fab { position: absolute; bottom: 85px; right: 20px; width: 55px; height: 55px; background: #000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; z-index: 90; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
@@ -63,8 +61,6 @@
         .m { padding: 10px 15px; border-radius: 18px; max-width: 75%; font-size: 14px; }
         .m.me { align-self: flex-end; background: #000; color: #fff; }
         .m.him { align-self: flex-start; background: #f1f1f1; color: #000; }
-
-        /* Progress Bar */
         #progresso-container { display: none; width: 100%; background: #eee; border-radius: 8px; margin: 10px 0; overflow: hidden; }
         #barra-progresso { width: 0%; height: 10px; background: #000; transition: 0.2s; }
     </style>
@@ -74,28 +70,18 @@
     <div id="tela-login">
         <div class="login-box">
             <h2>KING LOGIN</h2>
-            
             <div id="box-login">
                 <input type="text" id="user-id" class="input-login" placeholder="Usuário">
                 <input type="password" id="user-pass" class="input-login" placeholder="••••••">
                 <button onclick="fazerLogin()" class="btn-login">ENTRAR</button>
                 <p style="margin-top:25px; font-size:13px; color:#aaa;">Novo aqui? <a href="#" onclick="toggleAuth('cadastro')" style="color:#fff; font-weight:bold; text-decoration:none;">Criar conta</a></p>
-                <p onclick="toggleAuth('recuperar')" style="font-size:12px; margin-top:15px; cursor:pointer; color:#757575;">Esqueceu a senha?</p>
             </div>
-
             <div id="box-cadastro" style="display:none;">
                 <input type="text" id="reg-id" class="input-login" placeholder="@usuario">
                 <input type="text" id="reg-nome" class="input-login" placeholder="Nome Real">
                 <input type="password" id="reg-pass" class="input-login" placeholder="Senha">
                 <button onclick="fazerCadastro()" class="btn-login">CADASTRAR</button>
-                <p onclick="toggleAuth('login')" style="margin-top:20px; cursor:pointer; color:#aaa; font-size:13px;">Voltar para o Login</p>
-            </div>
-
-            <div id="box-recuperar" style="display:none;">
-                <input type="text" id="rec-id" class="input-login" placeholder="@usuario">
-                <input type="text" id="rec-nome" class="input-login" placeholder="Nome Real Exato">
-                <button onclick="recuperarConta()" class="btn-login">RECUPERAR</button>
-                <p onclick="toggleAuth('login')" style="margin-top:20px; cursor:pointer; color:#aaa; font-size:13px;">Voltar para o Login</p>
+                <p onclick="toggleAuth('login')" style="margin-top:20px; cursor:pointer; color:#aaa; font-size:13px;">Voltar</p>
             </div>
         </div>
     </div>
@@ -122,14 +108,33 @@
             <div id="p-grid" class="grid"></div>
         </div>
 
+        <div id="aba-visita" class="aba content">
+            <div onclick="switchTab('busca')" style="padding:15px; font-weight:bold; cursor:pointer; border-bottom:1px solid #eee;">⬅ VOLTAR À BUSCA</div>
+            <div style="text-align:center; padding:20px; border-bottom:1px solid #eee;">
+                <img id="visita-foto" src="" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:1px solid #000;">
+                <h2 id="visita-nome">...</h2>
+                <p id="visita-at" style="color:#888; margin-bottom:12px;">@...</p>
+                <div style="display:flex; justify-content:center; gap:10px;">
+                    <button id="btn-visita-seguir" class="btn-seguir nao-seguindo" onclick="toggleSeguir()">Seguir</button>
+                    <button class="btn-seguir" style="background:#000; color:#fff;" id="btn-visita-chat">Mandar Mensagem</button>
+                </div>
+            </div>
+            <div id="visita-bloqueio" style="padding:40px; text-align:center; color:#777;">
+                🔒 Esta conta é privada. Siga para ver as publicações.
+            </div>
+            <div id="visita-grid" class="grid" style="display:none;"></div>
+        </div>
+
         <div id="aba-detalhes" class="aba content">
             <div onclick="switchTab('perfil')" style="padding:15px; font-weight:bold; cursor:pointer; border-bottom:1px solid #eee;">⬅ VOLTAR</div>
             <div id="lista-detalhes"></div>
         </div>
 
         <div id="aba-busca" class="aba content">
-            <div style="padding:15px;"><input type="text" id="input-busca" placeholder="Pesquisar @..." onkeyup="buscarReal()"></div>
-            <div id="resultados-busca"></div>
+            <div style="padding:15px;">
+                <input type="text" id="input-busca" placeholder="Pesquisar por @usuario..." oninput="buscarReal()" style="width: 100%; padding: 12px 20px; border: 1px solid #ddd; border-radius: 25px; outline: none; font-weight: bold;">
+            </div>
+            <div id="resultados-busca" style="padding: 0 15px; display: flex; flex-direction: column; gap: 10px;"></div>
         </div>
 
         <div id="aba-chat" class="aba content">
@@ -152,19 +157,11 @@
 
     <div id="modal-post" class="modal"><div class="modal-box">
         <h3>Postar</h3>
-        <p style="font-size:10px; margin-top:10px;">Arquivo Principal:</p>
         <input type="file" id="post-file-main" accept="image/*,video/*" onchange="converte(this, 'midia')">
-        <p style="font-size:10px;">Capa do Perfil (Opcional):</p>
-        <input type="file" id="post-file-capa" accept="image/*" onchange="converte(this, 'capa')">
         <textarea id="post-legenda" placeholder="O que está pensando?"></textarea>
-        
-        <div id="progresso-container">
-            <div id="barra-progresso"></div>
-            <p id="texto-progresso" style="font-size:10px; text-align:center; margin-top:5px;">0%</p>
-        </div>
-
+        <div id="progresso-container"><div id="barra-progresso"></div></div>
         <button id="btn-publicar" onclick="enviarPost()" style="width:100%; padding:14px; background:#000; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">PUBLICAR</button>
-        <p id="btn-cancelar-post" onclick="fecharModais()" style="text-align:center; color:red; margin-top:15px; cursor:pointer;">Cancelar</p>
+        <p onclick="fecharModais()" style="text-align:center; color:red; margin-top:15px; cursor:pointer;">Cancelar</p>
     </div></div>
 
     <div id="modal-edit" class="modal"><div class="modal-box">
@@ -181,7 +178,6 @@
     </div></div>
 
     <script>
-        // CONFIGURAÇÕES FIREBASE
         const firebaseConfig = { 
             apiKey: "AIzaSyD9YUu-ovvkUnB5xRdWKhroDoUsSw3MEXY", 
             databaseURL: "https://king-connect-2026-default-rtdb.firebaseio.com" 
@@ -190,16 +186,11 @@
         const fb = firebase.database();
 
         let meuUser = JSON.parse(localStorage.getItem('king_session'));
-        let tM = "", tC = "", tP = "", chatAtivo = null;
+        let tM = "", tP = "", chatAtivo = null, usuarioVisitado = null;
 
-        // AUTH CONTROL
         function toggleAuth(m) {
-            document.getElementById('box-login').style.display = m==='login'||m==='login'?'block':'none';
+            document.getElementById('box-login').style.display = m==='login'?'block':'none';
             document.getElementById('box-cadastro').style.display = m==='cadastro'?'block':'none';
-            document.getElementById('box-recuperar').style.display = m==='recuperar'?'block':'none';
-            if(m === 'login') {
-                document.getElementById('box-login').style.display = 'block';
-            }
         }
 
         function fazerCadastro() {
@@ -210,33 +201,14 @@
             fb.ref('usuarios/'+id).set({ id, nome, pass, foto: '' }).then(() => logar({ id, nome, pass, foto: '' }));
         }
 
-        // FUNÇÃO DE LOGIN CORRIGIDA COM TOLERÂNCIA A LETRAS MAIÚSCULAS
         function fazerLogin() {
             const id = document.getElementById('user-id').value.toLowerCase().trim();
             const pass = document.getElementById('user-pass').value;
-
-            if(!id || !pass) return alert("Por favor, preencha os campos!");
-
+            if(!id || !pass) return alert("Preencha tudo!");
             fb.ref('usuarios/'+id).once('value', snap => {
                 const u = snap.val();
-                if(u && u.pass === pass) {
-                    logar(u);
-                } else {
-                    alert("Usuário ou senha incorretos!");
-                }
-            }).catch(e => {
-                console.error(e);
-                alert("Erro ao conectar ao Firebase.");
-            });
-        }
-
-        function recuperarConta() {
-            const id = document.getElementById('rec-id').value.toLowerCase().trim();
-            const nome = document.getElementById('rec-nome').value.trim();
-            fb.ref('usuarios/'+id).once('value', snap => {
-                const u = snap.val();
-                if(u && u.nome.toLowerCase() === nome.toLowerCase()) { alert("Sua senha é: " + u.pass); logar(u); }
-                else alert("Não encontrado!");
+                if(u && u.pass === pass) logar(u);
+                else alert("Incorreto!");
             });
         }
 
@@ -250,7 +222,6 @@
 
         function sair() { localStorage.removeItem('king_session'); location.reload(); }
 
-        // NAVIGATION
         function switchTab(t) {
             document.querySelectorAll('.aba').forEach(a => a.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -261,36 +232,142 @@
             if(t==='chat') carregarConversas();
         }
 
-        // FEED
+        // LÓGICA DO FEED (Apenas de pessoas que eu sigo + minhas próprias)
         function carregarFeed() {
-            fb.ref('posts').on('value', snap => {
-                const div = document.getElementById('aba-feed'); div.innerHTML = "";
-                let posts = [];
-                snap.forEach(p => { posts.push({key: p.key, ...p.val()}); });
-                posts.reverse().forEach(post => {
-                    div.innerHTML += renderPost(post.key, post, post.uid === meuUser.id);
+            fb.ref('seguindo/' + meuUser.id).once('value', snapSeguindo => {
+                let listaSeguidos = [meuUser.id]; // Inclui eu mesmo no feed
+                snapSeguindo.forEach(s => { if(s.val() === true) listaSeguidos.push(s.key); });
+
+                fb.ref('posts').on('value', snap => {
+                    const div = document.getElementById('aba-feed'); div.innerHTML = "";
+                    let posts = [];
+                    snap.forEach(p => { 
+                        let dados = p.val();
+                        if(listaSeguidos.includes(dados.uid)) {
+                            posts.push({key: p.key, ...dados}); 
+                        }
+                    });
+                    if(posts.length === 0) {
+                        div.innerHTML = `<p style="text-align:center; margin-top:40px; color:#999; font-size:14px;">Nenhum post disponível. Siga perfis na aba de busca!</p>`;
+                        return;
+                    }
+                    posts.reverse().forEach(post => {
+                        div.innerHTML += renderPost(post.key, post, post.uid === meuUser.id);
+                    });
                 });
             });
         }
 
         function renderPost(id, p, meu) {
+            const possuiMedia = p && p.media;
+            const ehVideo = possuiMedia && typeof p.media === 'string' && p.media.includes('video');
             return `
             <div class="post-card">
                 <div style="padding:10px; font-size:11px; display:flex; justify-content:space-between; align-items:center;">
-                    <b>@${p.uid}</b>
+                    <b>@${p.uid || 'usuario'}</b>
                     ${meu ? `<span onclick="apagar('${id}')" style="color:red; cursor:pointer; font-weight:bold;">Remover</span>` : ''}
                 </div>
                 <div class="media-container">
-                    ${p.media.includes('video') ? `<video src="${p.media}" class="post-media" controls></video>` : `<img src="${p.media}" class="post-media">`}
+                    ${possuiMedia ? (ehVideo ? `<video src="${p.media}" class="post-media" controls></video>` : `<img src="${p.media}" class="post-media">`) : ''}
                 </div>
-                <div style="padding:10px; font-size:13px;"><b>${p.nome}</b> ${p.legenda || ''}</div>
+                <div style="padding:10px; font-size:13px;"><b>${p.nome || ''}</b> ${p.legenda || ''}</div>
                 <div style="padding:10px; border-top:1px solid #eee; display:flex; align-items:center; gap:5px;">
                     <span onclick="like('${id}')" style="cursor:pointer; font-size:16px;">❤️</span> <span style="font-size:12px;">${p.likes || 0}</span>
                 </div>
             </div>`;
         }
 
-        // PERFIL
+        // BUSCA E VISITAÇÃO DE PERFIL
+        function buscarReal() {
+            const b = document.getElementById('input-busca').value.toLowerCase().trim();
+            const r = document.getElementById('resultados-busca'); r.innerHTML = "";
+            if(b.length < 1) return;
+            
+            fb.ref('usuarios').once('value', snap => {
+                snap.forEach(u => { 
+                    const uid = u.key; const dados = u.val();
+                    if(uid.includes(b) && uid !== meuUser.id) {
+                        const foto = dados.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                        r.innerHTML += `
+                            <div onclick="visitarPerfil('${uid}')" style="display: flex; align-items: center; gap: 15px; padding: 12px; border: 1px solid #eee; border-radius: 12px; cursor: pointer; background: #fff; margin-bottom:5px;">
+                                <img src="${foto}" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;">
+                                <div style="text-align: left; flex:1;">
+                                    <div style="font-weight: bold; font-size: 15px;">${dados.nome || uid}</div>
+                                    <div style="color: #777; font-size: 12px;">@${uid}</div>
+                                </div>
+                                <div style="color: #aaa; font-size: 14px;">➔</div>
+                            </div>`;
+                    }
+                });
+            });
+        }
+
+        function visitarPerfil(uid) {
+            usuarioVisitado = uid;
+            switchTab('visita');
+            
+            fb.ref('usuarios/' + uid).once('value', snap => {
+                const u = snap.val();
+                document.getElementById('visita-nome').innerText = u.nome || uid;
+                document.getElementById('visita-at').innerText = "@" + uid;
+                document.getElementById('visita-foto').src = u.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                
+                // Configura ação direta do botão de chat (Mesmo sem seguir)
+                document.getElementById('btn-visita-chat').onclick = () => {
+                    abrirChat(uid);
+                    switchTab('chat');
+                };
+
+                // Checa se já está seguindo para liberar os posts
+                fb.ref(`seguindo/${meuUser.id}/${uid}`).on('value', s => {
+                    const seguindo = s.val() === true;
+                    const btn = document.getElementById('btn-visita-seguir');
+                    
+                    if(seguindo) {
+                        btn.innerText = "Seguindo";
+                        btn.className = "btn-seguir seguindo";
+                        document.getElementById('visita-bloqueio').style.display = "none";
+                        document.getElementById('visita-grid').style.display = "grid";
+                        carregarGridVisita(uid);
+                    } else {
+                        btn.innerText = "Seguir";
+                        btn.className = "btn-seguir nao-seguindo";
+                        document.getElementById('visita-bloqueio').style.display = "block";
+                        document.getElementById('visita-grid').style.display = "none";
+                    }
+                });
+            });
+        }
+
+        function toggleSeguir() {
+            if(!usuarioVisitado) return;
+            const ref = fb.ref(`seguindo/${meuUser.id}/${usuarioVisitado}`);
+            ref.once('value', snap => {
+                if(snap.val() === true) {
+                    ref.remove(); // Deixar de seguir
+                } else {
+                    ref.set(true); // Seguir
+                }
+            });
+        }
+
+        function carregarGridVisita(uid) {
+            fb.ref('posts').once('value', snap => {
+                const grid = document.getElementById('visita-grid'); grid.innerHTML = "";
+                snap.forEach(p => {
+                    const post = p.val();
+                    if(post.uid === uid) {
+                        const isVideo = post.media && typeof post.media === 'string' && post.media.includes('video');
+                        grid.innerHTML += `
+                        <div class="grid-item">
+                            ${isVideo ? `<video src="${post.media}"></video>` : `<img src="${post.media}">`}
+                        </div>`;
+                    }
+                });
+            });
+        }
+
+        // PERFIL PRÓPRIO
         function carregarPerfil() {
             document.getElementById('view-nome').innerText = meuUser.nome;
             document.getElementById('view-at').innerText = "@" + meuUser.id;
@@ -301,40 +378,17 @@
                 snap.forEach(p => {
                     const post = p.val();
                     if(post.uid === meuUser.id) {
-                        const thumb = post.capa || post.media;
-                        const isVideo = !post.capa && post.media.includes('video');
+                        const isVideo = post.media && typeof post.media === 'string' && post.media.includes('video');
                         grid.innerHTML += `
-                        <div class="grid-item">
-                            <div class="btn-capa-edit" onclick="trocarCapa('${p.key}')">Trocar Capa</div>
-                            <div style="width:100%; height:100%" onclick="verDetalhes()">
-                                ${isVideo ? `<video src="${thumb}"></video>` : `<img src="${thumb}">`}
-                            </div>
+                        <div class="grid-item" onclick="verDetalhes()">
+                            ${isVideo ? `<video src="${post.media}"></video>` : `<img src="${post.media}">`}
                         </div>`;
                     }
                 });
             });
         }
 
-        function trocarCapa(key) {
-            const input = document.createElement('input');
-            input.type = 'file'; input.accept = 'image/*';
-            input.onchange = e => {
-                const reader = new FileReader();
-                reader.onload = ev => { fb.ref('posts/' + key).update({ capa: ev.target.result }).then(() => carregarPerfil()); };
-                reader.readAsDataURL(e.target.files[0]);
-            };
-            input.click();
-        }
-
-        function verDetalhes() {
-            switchTab('detalhes');
-            fb.ref('posts').once('value', snap => {
-                const div = document.getElementById('lista-detalhes'); div.innerHTML = "";
-                snap.forEach(p => { if(p.val().uid === meuUser.id) div.innerHTML += renderPost(p.key, p.val(), true); });
-            });
-        }
-
-        // CHAT
+        // CHAT (Totalmente direto e instantâneo)
         function carregarConversas() {
             fb.ref('conversas/'+meuUser.id).on('value', snap => {
                 const d = document.getElementById('lista-conversas'); d.innerHTML = "";
@@ -367,107 +421,38 @@
             input.value = "";
         }
 
-        // UPLOAD E CONVERSÃO
         function converte(input, t) {
             const r = new FileReader();
-            r.onload = e => { 
-                if(t==='midia') tM = e.target.result; 
-                if(t==='capa') tC = e.target.result; 
-                if(t==='perfil-foto') tP = e.target.result; 
-            };
+            r.onload = e => { if(t==='midia') tM = e.target.result; if(t==='perfil-foto') tP = e.target.result; };
             if(input.files[0]) r.readAsDataURL(input.files[0]);
         }
 
-        // PROGRESSO CORRIGIDO (NÃO TRAVA EM 99%)
         function enviarPost() {
             if(!tM) return alert("Falta mídia!");
-
-            const btn = document.getElementById('btn-publicar');
-            const btnCancel = document.getElementById('btn-cancelar-post');
-            const containerProgresso = document.getElementById('progresso-container');
-            const barra = document.getElementById('barra-progresso');
-            const texto = document.getElementById('texto-progresso');
-
-            btn.disabled = true;
-            btn.innerText = "POSTANDO...";
-            btnCancel.style.display = "none";
-            containerProgresso.style.display = "block";
-            
-            let progresso = 0;
-            const intervalo = setInterval(() => {
-                if(progresso < 95) {
-                    progresso += Math.floor(Math.random() * 5) + 1;
-                } else if (progresso < 99) {
-                    progresso += 0.2;
-                }
-                barra.style.width = progresso + "%";
-                texto.innerText = Math.floor(progresso) + "%";
-            }, 150);
-
+            document.getElementById('btn-publicar').disabled = true;
             fb.ref('posts').push({
-                uid: meuUser.id,
-                nome: meuUser.nome,
-                media: tM,
-                capa: tC || "",
-                legenda: document.getElementById('post-legenda').value,
-                likes: 0,
-                data: Date.now()
-            }).then(() => {
-                clearInterval(intervalo);
-                barra.style.width = "100%";
-                texto.innerText = "100%";
-                setTimeout(() => {
-                    resetarModalPost();
-                    fecharModais();
-                }, 500);
-            }).catch(e => {
-                clearInterval(intervalo);
-                alert("Erro ao postar! Verifique se o arquivo não é muito grande.");
-                btn.disabled = false;
-                btn.innerText = "PUBLICAR";
-                btnCancel.style.display = "block";
-            });
+                uid: meuUser.id, nome: meuUser.nome, media: tM,
+                legenda: document.getElementById('post-legenda').value, likes: 0, data: Date.now()
+            }).then(() => { fecharModais(); carregarFeed(); });
         }
 
-        function resetarModalPost() {
-            tM = ""; tC = "";
-            document.getElementById('post-legenda').value = "";
-            document.getElementById('btn-publicar').disabled = false;
-            document.getElementById('btn-publicar').innerText = "PUBLICAR";
-            document.getElementById('btn-cancelar-post').style.display = "block";
-            document.getElementById('progresso-container').style.display = "none";
-            document.getElementById('barra-progresso').style.width = "0%";
-            document.getElementById('texto-progresso').innerText = "0%";
-            document.getElementById('post-file-main').value = "";
-            document.getElementById('post-file-capa').value = "";
-        }
-
-        // OUTROS
         function salvarPerfil() {
             const n = document.getElementById('edit-nome').value;
             if(n) meuUser.nome = n; if(tP) meuUser.foto = tP;
-            fb.ref('usuarios/'+meuUser.id).update(meuUser).then(() => { 
-                localStorage.setItem('king_session', JSON.stringify(meuUser)); 
-                fecharModais(); 
-                carregarPerfil(); 
-            });
+            fb.ref('usuarios/'+meuUser.id).update(meuUser).then(() => { localStorage.setItem('king_session', JSON.stringify(meuUser)); fecharModais(); carregarPerfil(); });
         }
 
-        function buscarReal() {
-            const b = document.getElementById('input-busca').value.toLowerCase();
-            const r = document.getElementById('resultados-busca'); r.innerHTML = "";
-            if(b.length < 2) return;
-            fb.ref('usuarios').once('value', snap => {
-                snap.forEach(u => { 
-                    if(u.key.includes(b) && u.key !== meuUser.id) 
-                        r.innerHTML += `<div onclick="abrirChat('${u.key}'); switchTab('chat')" style="padding:15px; border-bottom:1px solid #eee; cursor:pointer;"><b>@${u.key}</b></div>`; 
-                });
+        function verDetalhes() {
+            switchTab('detalhes');
+            fb.ref('posts').once('value', snap => {
+                const div = document.getElementById('lista-detalhes'); div.innerHTML = "";
+                snap.forEach(p => { if(p.val().uid === meuUser.id) div.innerHTML += renderPost(p.key, p.val(), true); });
             });
         }
 
         function like(id) { fb.ref('posts/'+id+'/likes').transaction(c => (c || 0) + 1); }
         function apagar(id) { if(confirm("Apagar postagem?")) fb.ref('posts/'+id).remove().then(() => { if(document.getElementById('aba-detalhes').classList.contains('active')) verDetalhes(); }); }
-        function abrirUpload() { resetarModalPost(); document.getElementById('modal-post').style.display='flex'; }
+        function abrirUpload() { tM = ""; document.getElementById('modal-post').style.display='flex'; }
         function abrirEdit() { document.getElementById('modal-edit').style.display='flex'; }
         function abrirConfig() { document.getElementById('modal-config').style.display='flex'; }
         function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
