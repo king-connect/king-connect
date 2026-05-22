@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KINGConnect ELITE v48</title>
+    <title>KINGConnect ELITE v50</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
@@ -203,13 +203,20 @@
         <div class="story-progress-container" id="fs-story-progress-wrapper"></div>
         <div style="display:flex; justify-content:space-between; align-items:center; color:#fff; padding:5px 0 15px 0; font-weight:bold; z-index:10;">
             <span id="fs-story-user" style="font-size:15px;">@usuario</span>
-            <div>
-                <button id="btn-excluir-story-ativo" onclick="excluirStoryAtual()" style="display:none; background:red; color:#fff; border:none; padding:5px 10px; margin-right:15px; font-size:11px; font-weight:bold; border-radius:4px; cursor:pointer;">Excluir Story</button>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div id="fs-story-views-box" style="display: none; font-size: 13px; background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 12px; align-items: center; gap: 4px;">
+                    👁️ <span id="fs-story-views-count">0</span>
+                </div>
+                <button id="btn-excluir-story-ativo" onclick="excluirStoryAtual()" style="display:none; background:red; color:#fff; border:none; padding:5px 10px; font-size:11px; font-weight:bold; border-radius:4px; cursor:pointer;">Excluir</button>
                 <span onclick="fecharStoryFS()" style="cursor:pointer; font-size:22px; padding:5px;">✕</span>
             </div>
         </div>
         <div style="flex:1; display:flex; justify-content:center; align-items:center; overflow:hidden; background:#000; position:relative; border-radius:8px;">
             <img id="fs-story-img" src="" style="width:100%; height:100%; object-fit:contain;">
+            
+            <div id="fs-story-heart-box" style="position: absolute; bottom: 20px; right: 20px; background: rgba(0,0,0,0.6); padding: 10px; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20;" onclick="alternarLikeStory()">
+                <span id="fs-story-heart-icon" style="font-size: 24px;">❤️</span>
+            </div>
         </div>
     </div>
 
@@ -342,7 +349,7 @@
             if(t==='chat') carregarConversas();
         }
 
-        /* STORIES CORRIGIDOS */
+        /* STORIES COM LIKE E CONTADOR DE VIEWS POR PESSOA */
         function carregarStories() {
             const wrapper = document.getElementById('secao-stories');
             wrapper.innerHTML = `
@@ -423,6 +430,27 @@
             document.getElementById('fs-story-user').innerText = "@" + story.uid;
             document.getElementById('fs-story-img').src = story.media;
             
+            // Computar visualização única (Se não for o próprio dono)
+            if(story.uid !== meuUser.id) {
+                fb.ref(`stories/${story.key}/views/${meuUser.id}`).set(true);
+            }
+
+            // Exibir quantidade de visualizações apenas se for o dono
+            const viewsBox = document.getElementById('fs-story-views-box');
+            const viewsCount = document.getElementById('fs-story-views-count');
+            if(story.uid === meuUser.id) {
+                viewsBox.style.display = "flex";
+                let totalViews = story.views ? Object.keys(story.views).length : 0;
+                viewsCount.innerText = totalViews;
+            } else {
+                viewsBox.style.display = "none";
+            }
+
+            // Atualizar ícone de coração com base no estado do like do usuário
+            const heartIcon = document.getElementById('fs-story-heart-icon');
+            let jaCurtiuStory = story.likesRef && story.likesRef[meuUser.id];
+            heartIcon.style.filter = jaCurtiuStory ? "none" : "grayscale(100%)";
+            
             const btnExcluir = document.getElementById('btn-excluir-story-ativo');
             btnExcluir.style.display = (story.uid === meuUser.id) ? "inline-block" : "none";
 
@@ -440,6 +468,41 @@
                 indiceStoryAtual++;
                 exibirStoryFS();
             }, 5050);
+        }
+
+        function alternarLikeStory() {
+            const story = listaGlobalStoriesAtivos[indiceStoryAtual];
+            if(!story) return;
+
+            const refLikeStory = fb.ref(`stories/${story.key}/likesRef/${meuUser.id}`);
+            refLikeStory.once('value', snap => {
+                if(snap.exists()) {
+                    refLikeStory.remove().then(() => atualizarDadosStoryAtivoLocamente(story.key));
+                } else {
+                    refLikeStory.set(true).then(() => atualizarDadosStoryAtivoLocamente(story.key));
+                }
+            });
+        }
+
+        // Sincroniza a interface sem quebrar o timer do story ativo
+        function atualizarDadosStoryAtivoLocamente(storyKey) {
+            fb.ref(`stories/${storyKey}`).once('value', snap => {
+                const dadosNovos = snap.val();
+                if(dadosNovos) {
+                    let idx = listaGlobalStoriesAtivos.findIndex(s => s.key === storyKey);
+                    if(idx !== -1) {
+                        listaGlobalStoriesAtivos[idx] = { key: storyKey, ...dadosNovos };
+                        const heartIcon = document.getElementById('fs-story-heart-icon');
+                        let jaCurtiuStory = dadosNovos.likesRef && dadosNovos.likesRef[meuUser.id];
+                        heartIcon.style.filter = jaCurtiuStory ? "none" : "grayscale(100%)";
+
+                        if(dadosNovos.uid === meuUser.id) {
+                            let totalViews = dadosNovos.views ? Object.keys(dadosNovos.views).length : 0;
+                            document.getElementById('fs-story-views-count').innerText = totalViews;
+                        }
+                    }
+                }
+            });
         }
 
         function excluirStoryAtual() {
@@ -460,10 +523,10 @@
             document.getElementById('modal-story-fs').style.display = 'none';
         }
 
-        /* FEED & POSTS */
+        /* FEED (SÓ QUEM ESTÁ SEGUINDO) */
         function carregarFeed() {
             fb.ref('seguindo/' + meuUser.id).once('value', snapSeguindo => {
-                let listaSeguidos = [meuUser.id]; // Sempre vê os próprios posts no feed também
+                let listaSeguidos = [];
                 snapSeguindo.forEach(s => { if(s.val() === true) listaSeguidos.push(s.key); });
 
                 fb.ref('posts').on('value', snap => {
@@ -476,10 +539,10 @@
                         }
                     });
                     if(posts.length === 0) {
-                        div.innerHTML = `<p style="text-align:center; margin-top:40px; color:#999; padding:20px;">Nenhum post no feed. Explore a aba Busca!</p>`;
+                        div.innerHTML = `<p style="text-align:center; margin-top:40px; color:#999; padding:20px;">Nenhum post no feed. Siga usuários na aba Busca!</p>`;
                         return;
                     }
-                    posts.reverse().forEach(post => { div.innerHTML += renderPost(post.key, post, post.uid === meuUser.id); });
+                    posts.reverse().forEach(post => { div.innerHTML += renderPost(post.key, post, false); });
                 });
             });
         }
@@ -591,16 +654,16 @@
                     document.getElementById('v-qtd-posts').innerText = c;
                 });
 
-                fb.ref(`seguidores/${uid}`).on('value', sp => {
+                fb.ref(`followers/${uid}`).on('value', sp => {
                     let c = 0; sp.forEach(s => { if(s.val()===true) c++; });
                     document.getElementById('v-qtd-seguidores').innerText = c;
                 });
-                fb.ref(`seguindo/${uid}`).on('value', sp => {
+                fb.ref(`following/${uid}`).on('value', sp => {
                     let c = 0; sp.forEach(s => { if(s.val()===true) c++; });
                     document.getElementById('v-qtd-seguindo').innerText = c;
                 });
 
-                fb.ref(`seguindo/${meuUser.id}/${uid}`).on('value', s => {
+                fb.ref(`following/${meuUser.id}/${uid}`).on('value', s => {
                     const seguindo = s.val() === true;
                     const btn = document.getElementById('btn-visita-seguir');
                     if(seguindo) {
@@ -625,8 +688,8 @@
 
         function toggleSeguir() {
             if(!usuarioVisitado) return;
-            const refSeguindo = fb.ref(`seguindo/${meuUser.id}/${usuarioVisitado}`);
-            const refSeguidores = fb.ref(`seguidores/${usuarioVisitado}/${meuUser.id}`);
+            const refSeguindo = fb.ref(`following/${meuUser.id}/${usuarioVisitado}`);
+            const refSeguidores = fb.ref(`followers/${usuarioVisitado}/${meuUser.id}`);
             refSeguindo.once('value', snap => {
                 if(snap.val() === true) { refSeguindo.remove(); refSeguidores.remove(); }
                 else { refSeguindo.set(true); refSeguidores.set(true); }
@@ -665,11 +728,11 @@
                 document.getElementById('qtd-posts').innerText = count;
             });
 
-            fb.ref(`seguidores/${meuUser.id}`).on('value', sp => {
+            fb.ref(`followers/${meuUser.id}`).on('value', sp => {
                 let c = 0; sp.forEach(s => { if(s.val()===true) c++; });
                 document.getElementById('qtd-seguidores').innerText = c;
             });
-            fb.ref(`seguindo/${meuUser.id}`).on('value', sp => {
+            fb.ref(`following/${meuUser.id}`).on('value', sp => {
                 let c = 0; sp.forEach(s => { if(s.val()===true) c++; });
                 document.getElementById('qtd-seguindo').innerText = c;
             });
@@ -677,10 +740,11 @@
 
         function abrirModalRelacoes(tipo) {
             document.getElementById('modal-relacoes').style.display = 'flex';
+            const realNode = tipo === 'seguidores' ? 'followers' : 'following';
             document.getElementById('titulo-modal-relacoes').innerText = tipo === 'seguidores' ? 'Seguidores' : 'Seguindo';
             const corpo = document.getElementById('corpo-modal-relacoes'); corpo.innerHTML = "";
 
-            fb.ref(`${tipo}/${meuUser.id}`).once('value', snap => {
+            fb.ref(`${realNode}/${meuUser.id}`).once('value', snap => {
                 let itens = []; snap.forEach(s => { if(s.val() === true) itens.push(s.key); });
                 if(itens.length === 0) { corpo.innerHTML = "<p style='text-align:center;color:#999;'>Nenhum registro encontrado.</p>"; return; }
                 itens.forEach(uid => {
@@ -698,7 +762,7 @@
             });
         }
 
-        /* CHAT INTEGRALIZADO (RESOLVIDO) */
+        /* CHAT */
         function carregarConversas() {
             const container = document.getElementById('lista-conversas');
             container.innerHTML = `<p style="text-align:center; padding:20px; color:#aaa;">Buscando suas conversas activas...</p>`;
@@ -766,7 +830,7 @@
             document.getElementById('msg-input').value = "";
         }
 
-        /* AUXILIARES DE CONVERSÃO / POST */
+        /* AUXILIARES / POSTS */
         function ajustarCamposUpload() {
             const tipo = document.getElementById('upload-tipo').value;
             document.getElementById('wrapper-legenda-upload').style.display = tipo === 'story' ? 'none' : 'block';
