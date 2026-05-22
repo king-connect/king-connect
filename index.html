@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KINGConnect ELITE v36</title>
+    <title>KINGConnect ELITE v38</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
@@ -35,6 +35,27 @@
         .aba { display: none; width: 100%; height: 100%; }
         .aba.active { display: block; }
 
+        /* Barra de Stories */
+        .stories-wrapper { width: 100%; max-width: 450px; margin: 0 auto; display: flex; gap: 12px; padding: 12px 15px; overflow-x: auto; border-bottom: 1px solid #eee; background: #fff; scrollbar-width: none; }
+        .stories-wrapper::-webkit-scrollbar { display: none; }
+        .story-circle { display: flex; flex-direction: column; align-items: center; font-size: 11px; font-weight: bold; cursor: pointer; min-width: 65px; text-align: center; }
+        .story-avatar-container { width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+        .story-avatar-container img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #fff; background: #fff; }
+
+        /* Visualizador de Story */
+        #modal-ver-story { position: fixed; inset: 0; background: #000; z-index: 6000; display: none; flex-direction: column; justify-content: center; align-items: center; }
+        .story-top-bar { position: absolute; top: 15px; left: 0; right: 0; display: flex; flex-direction: column; gap: 8px; padding: 0 15px; z-index: 10; }
+        .story-progress-container { display: flex; gap: 4px; width: 100%; }
+        .story-progress-bar { height: 2px; flex: 1; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden; }
+        .story-progress-fill { height: 100%; width: 0%; background: #fff; transition: width linear; }
+        .story-user-info { display: flex; justify-content: space-between; align-items: center; color: #fff; font-weight: bold; font-size: 14px; }
+        .story-display-media { max-width: 100%; max-height: 85vh; object-fit: contain; }
+
+        /* Barra de Progresso do Upload */
+        .upload-progress-container { width: 100%; background: #eee; height: 14px; border-radius: 10px; margin: 15px 0; display: none; overflow: hidden; position: relative; }
+        .upload-progress-bar { height: 100%; width: 0%; background: #000; transition: width 0.1s linear; }
+        .upload-progress-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: #fff; mix-blend-mode: difference; }
+
         /* Banner de Capa */
         .perfil-capa-container { width: 100%; height: 140px; background: #e0e0e0; position: relative; background-size: cover; background-position: center; }
 
@@ -57,21 +78,18 @@
 
         /* Chat Layout */
         .conversa-item { display: flex; align-items: center; gap: 12px; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; background: #fff; position: relative; }
-        .conversa-item:hover { background: #fdfdfd; }
         .chat-info { flex: 1; display: flex; flex-direction: column; gap: 3px; overflow: hidden; }
         .chat-row-top { display: flex; justify-content: space-between; align-items: center; }
         .chat-last-msg { font-size: 13px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 4px; }
         .chat-unread-badge { background: #000; color: #fff; font-size: 11px; font-weight: bold; min-width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
 
-        /* Janela de Mensagens abertas */
+        /* Janela de Mensagens */
         #janela-chat { position: absolute; inset: 0; background: #fff; z-index: 200; display: none; flex-direction: column; }
         #chat-msgs { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 8px; background: #f9f9f9; }
         .m { padding: 10px 14px; border-radius: 16px; max-width: 75%; font-size: 14px; display: flex; flex-direction: column; position: relative; word-wrap: break-word; }
         .m.me { align-self: flex-end; background: #000; color: #fff; border-bottom-right-radius: 2px; }
         .m.him { align-self: flex-start; background: #fff; color: #000; border-bottom-left-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .msg-meta { font-size: 10px; align-self: flex-end; margin-top: 4px; display: flex; align-items: center; gap: 3px; opacity: 0.7; }
-
-        /* Componentes de Status ✓ e ✓✓ */
         .check-icon { font-size: 11px; font-weight: bold; display: inline-block; }
         .check-icon.read { color: #34b7f1; }
 
@@ -80,8 +98,6 @@
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
         .modal-box { background: #fff; padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; max-height: 80vh; overflow-y: auto; }
         input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; outline: none; }
-        
-        /* Lista de Usuários em Modais */
         .user-list-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #eee; }
         .user-list-item img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
     </style>
@@ -120,7 +136,10 @@
     <div class="main">
         <header><b>KINGCONNECT</b> <img src="https://cdn-icons-png.flaticon.com/512/3524/3524659.png" onclick="abrirConfig()" style="width:20px; filter:invert(1); cursor:pointer;"></header>
 
-        <div id="aba-feed" class="aba active content"></div>
+        <div id="aba-feed" class="aba active content">
+            <div id="container-stories-instagram" class="stories-wrapper"></div>
+            <div id="feed-posts-stream"></div>
+        </div>
         
         <div id="aba-perfil" class="aba content">
             <div id="view-capa" class="perfil-capa-container"></div>
@@ -135,7 +154,6 @@
                     <div class="stat-box" onclick="abrirModalRelacoes('seguidores')"> <span id="qtd-seguidores">0</span> seguidores </div>
                     <div class="stat-box" onclick="abrirModalRelacoes('seguindo')"> <span id="qtd-seguindo">0</span> seguindo </div>
                 </div>
-
                 <button onclick="abrirEdit()" style="padding:6px 15px; border-radius:20px; border:1px solid #ddd; background:#fff; font-size:11px; font-weight:bold; cursor:pointer;">Editar Perfil / Capa</button>
             </div>
             <div id="p-grid" class="grid"></div>
@@ -154,7 +172,6 @@
                     <div class="stat-box"> <span id="v-qtd-seguidores">0</span> seguidores </div>
                     <div class="stat-box"> <span id="v-qtd-seguindo">0</span> seguindo </div>
                 </div>
-
                 <div style="display:flex; justify-content:center; gap:10px;">
                     <button id="btn-visita-seguir" class="btn-seguir nao-seguindo" onclick="toggleSeguir()">Seguir</button>
                     <button class="btn-seguir" style="background:#000; color:#fff;" id="btn-visita-chat">Mandar Mensagem</button>
@@ -183,7 +200,6 @@
 
         <div id="aba-chat" class="aba content">
             <div id="lista-conversas"></div>
-
             <div id="janela-chat">
                 <header style="background:#fff; color:#000; border-bottom:1px solid #eee; display:flex; align-items:center; padding:0 15px; height:60px;">
                     <span onclick="fecharChat()" style="cursor:pointer; font-size:20px;">⬅</span>
@@ -200,6 +216,17 @@
         <button class="fab" onclick="abrirUpload()">+</button>
     </div>
 
+    <div id="modal-ver-story">
+        <div class="story-top-bar">
+            <div id="story-bars-container" class="story-progress-container"></div>
+            <div class="story-user-info">
+                <span id="story-txt-user">@username</span>
+                <span onclick="fecharStoryViewer()" style="cursor:pointer; font-size:22px; padding:0 5px;">✕</span>
+            </div>
+        </div>
+        <div id="story-media-box" style="width:100%; height:100%; display:flex; justify-content:center; align-items:center;"></div>
+    </div>
+
     <div id="modal-relacoes" class="modal"><div class="modal-box">
         <h3 id="titulo-modal-relacoes" style="margin-bottom:15px;">Usuários</h3>
         <div id="corpo-modal-relacoes"></div>
@@ -207,30 +234,37 @@
     </div></div>
 
     <div id="modal-post" class="modal"><div class="modal-box">
-        <h3>Nova Postagem</h3>
-        <input type="file" id="post-file-main" accept="image/*,video/*" onchange="converte(this, 'midia')">
-        <textarea id="post-legenda" placeholder="O que deseja publicar?"></textarea>
+        <h3>Criar Nova Publicação</h3>
+        <select id="upload-tipo" onchange="ajustarCamposUpload()">
+            <option value="feed">Postagem para o Feed (Até 5 min)</option>
+            <option value="story">Adicionar ao meu Story (Até 2 min)</option>
+        </select>
+        <label style="font-size:12px; font-weight:bold; color:#666;">Arquivo:</label>
+        <input type="file" id="post-file-main" accept="image/*,video/*" onchange="processarMidiaComTrava(this)">
+        
+        <div id="campo-legenda-feed">
+            <textarea id="post-legenda" placeholder="Escreva uma legenda opcional..."></textarea>
+        </div>
+
+        <div id="container-progresso-post" class="upload-progress-container">
+            <div id="bar-progresso-post" class="upload-progress-bar"></div>
+            <div id="txt-progresso-post" class="upload-progress-text">0%</div>
+        </div>
+
         <button id="btn-publicar" onclick="enviarPost()" style="width:100%; padding:14px; background:#000; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">PUBLICAR</button>
-        <p onclick="fecharModais()" style="text-align:center; color:red; margin-top:15px; cursor:pointer; font-weight:bold;">Cancelar</p>
+        <p id="btn-cancelar-post" onclick="fecharModais()" style="text-align:center; color:red; margin-top:15px; cursor:pointer; font-weight:bold;">Cancelar</p>
     </div></div>
 
     <div id="modal-edit" class="modal"><div class="modal-box">
         <h3>Editar Dados</h3>
         <label style="font-size:12px; font-weight:bold; color:#555;">Nome de exibição:</label>
         <input type="text" id="edit-nome" placeholder="Nome Exibido">
-        
-        <label style="font-size:12px; font-weight:bold; color:#555;">Foto de Perfil:</label>
-        <input type="file" accept="image/*" onchange="converte(this, 'perfil-foto')">
-        
-        <label style="font-size:12px; font-weight:bold; color:#555;">Foto da Capa:</label>
-        <input type="file" accept="image/*" onchange="converte(this, 'perfil-capa')">
-        
-        <label style="font-size:12px; font-weight:bold; color:#555;">Privacidade do Perfil:</label>
+        <input type="file" accept="image/*" onchange="convertePerfil(this, 'perfil-foto')">
+        <input type="file" accept="image/*" onchange="convertePerfil(this, 'perfil-capa')">
         <select id="edit-privacidade">
             <option value="publica">Pública (Qualquer um vê os posts)</option>
             <option value="privada">Privada (Só seguidores aprovados vêem os posts)</option>
         </select>
-
         <button onclick="salvarPerfil()" style="width:100%; padding:14px; background:#000; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:bold; margin-top:10px;">SALVAR</button>
         <p onclick="fecharModais()" style="text-align:center; margin-top:15px; cursor:pointer; font-weight:bold; color:#666;">Fechar</p>
     </div></div>
@@ -250,6 +284,7 @@
 
         let meuUser = JSON.parse(localStorage.getItem('king_session'));
         let tM = "", tP = "", tC = "", chatAtivo = null, usuarioVisitado = null;
+        let storyTimeout = null, listaStoriesAtivos = [], indexStoryAtual = 0;
 
         function toggleAuth(m) {
             document.getElementById('box-login').style.display = m==='login'?'block':'none';
@@ -280,13 +315,10 @@
             localStorage.setItem('king_session', JSON.stringify(user));
             document.getElementById('tela-login').style.display = 'none';
             document.getElementById('sidebar').style.display = 'flex';
-            
-            // Verifica se há uma marcação de @ na URL antes de abrir o feed padrão
             checarUrlLinkDireto();
             escutarMensagensGlobais();
         }
 
-        // SISTEMA DE LINK DIRETO VIA URL PARÂMETRO (?@usuario)
         function checarUrlLinkDireto() {
             const urlParams = window.location.search;
             if(urlParams && urlParams.includes('?@')) {
@@ -294,12 +326,9 @@
                 if(usernameAlvo) {
                     fb.ref('usuarios/' + usernameAlvo).once('value', snap => {
                         if(snap.exists()) {
-                            // Altera o comportamento do botão voltar para abrir o feed principal
                             document.getElementById('btn-voltar-busca-contexto').onclick = () => { switchTab('feed'); };
                             visitarPerfil(usernameAlvo);
-                        } else {
-                            switchTab('feed');
-                        }
+                        } else { switchTab('feed'); }
                     });
                     return;
                 }
@@ -312,31 +341,212 @@
         function switchTab(t) {
             document.querySelectorAll('.aba').forEach(a => a.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            
             const elementoAba = document.getElementById('aba-'+t);
             if(elementoAba) elementoAba.classList.add('active');
-            
             if(document.getElementById('btn-'+t)) document.getElementById('btn-'+t).classList.add('active');
             
-            if(t==='feed') carregarFeed();
+            if(t==='feed') { carregarFeed(); carregarStoriesNoTopo(); }
             if(t==='perfil') carregarPerfil();
             if(t==='chat') carregarConversas();
         }
 
-        // CONTROLADOR DO FEED 
+        // VERIFICAÇÃO RIGOROSA DE TEMPO (STORIES 2 MIN / FEED 5 MIN)
+        function processarMidiaComTrava(input) {
+            const arquivo = input.files[0];
+            if (!arquivo) return;
+            const tipoDestino = document.getElementById('upload-tipo').value;
+
+            if (arquivo.type.includes('video')) {
+                const videoDummy = document.createElement('video');
+                videoDummy.preload = 'metadata';
+                videoDummy.src = URL.createObjectURL(arquivo);
+                
+                videoDummy.onloadedmetadata = function() {
+                    URL.revokeObjectURL(videoDummy.src);
+                    
+                    if (tipoDestino === 'story' && videoDummy.duration > 120) {
+                        alert("Não permitido! O vídeo para Story deve possuir no máximo 2 minutos (120 segundos).");
+                        input.value = ""; tM = ""; return;
+                    }
+                    if (tipoDestino === 'feed' && videoDummy.duration > 300) {
+                        alert("Não permitido! O vídeo para o Feed deve possuir no máximo 5 minutos (300 segundos).");
+                        input.value = ""; tM = ""; return;
+                    }
+                    redirecionarParaLeitor(arquivo);
+                };
+            } else {
+                redirecionarParaLeitor(arquivo);
+            }
+        }
+
+        function redirecionarParaLeitor(file) {
+            const leitor = new FileReader();
+            leitor.onload = function(e) { tM = e.target.result; };
+            leitor.readAsDataURL(file);
+        }
+
+        // STORIES: 24 HORAS SEGUIDAS COM LIMPEZA FÍSICA NO FIREBASE
+        function carregarStoriesNoTopo() {
+            fb.ref('seguindo/' + meuUser.id).once('value', snapSeguindo => {
+                let sLista = [meuUser.id];
+                snapSeguindo.forEach(s => { if(s.val() === true) sLista.push(s.key); });
+
+                fb.ref('stories').on('value', snapStories => {
+                    const barra = document.getElementById('container-stories-instagram');
+                    barra.innerHTML = "";
+                    let storiesAgrupados = {};
+                    const limite24h = Date.now() - (24 * 60 * 60 * 1000);
+
+                    snapStories.forEach(st => {
+                        let dad = st.val();
+                        // Se o Story expirou de fato, apaga fisicamente do Firebase em tempo real
+                        if (dad.timestamp < limite24h) {
+                            fb.ref('stories/' + st.key).remove();
+                        } else if (sLista.includes(dad.uid)) {
+                            if (!storiesAgrupados[dad.uid]) storiesAgrupados[dad.uid] = [];
+                            storiesAgrupados[dad.uid].push({key: st.key, ...dad});
+                        }
+                    });
+
+                    Object.keys(storiesAgrupados).forEach(uid => {
+                        fb.ref('usuarios/' + uid).once('value', uSnap => {
+                            const userDados = uSnap.val() || { nome: uid, foto: '' };
+                            const fotoFinal = userDados.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                            
+                            const divCircle = document.createElement('div');
+                            divCircle.className = "story-circle";
+                            divCircle.innerHTML = `
+                                <div class="story-avatar-container"><img src="${fotoFinal}"></div>
+                                <span style="display:block; width:60px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${uid === meuUser.id ? 'Seu Story' : uid}</span>
+                            `;
+                            divCircle.onclick = () => abrirVisualizadorStories(storiesAgrupados[uid], uid);
+                            barra.appendChild(divCircle);
+                        });
+                    });
+                });
+            });
+        }
+
+        function abrirVisualizadorStories(lista, uid) {
+            listaStoriesAtivos = lista; indexStoryAtual = 0;
+            document.getElementById('modal-ver-story').style.display = 'flex';
+            document.getElementById('story-txt-user').innerText = "@" + uid;
+            mostrarStoryIndex();
+        }
+
+        function mostrarStoryIndex() {
+            clearTimeout(storyTimeout);
+            if (indexStoryAtual >= listaStoriesAtivos.length) { fecharStoryViewer(); return; }
+
+            const item = listaStoriesAtivos[indexStoryAtual];
+            const displayBox = document.getElementById('story-media-box'); displayBox.innerHTML = "";
+            const barsContainer = document.getElementById('story-bars-container'); barsContainer.innerHTML = "";
+            
+            for (let i = 0; i < listaStoriesAtivos.length; i++) {
+                barsContainer.innerHTML += `<div class="story-progress-bar"><div id="s-fill-${i}" class="story-progress-fill"></div></div>`;
+            }
+
+            const activeFill = document.getElementById(`s-fill-${indexStoryAtual}`);
+            const ehVideo = item.media && typeof item.media === 'string' && item.media.includes('video');
+
+            if (ehVideo) {
+                const vid = document.createElement('video'); vid.src = item.media; vid.className = "story-display-media"; vid.autoplay = true; displayBox.appendChild(vid);
+                vid.onloadedmetadata = () => {
+                    let duracao = (vid.duration || 5) * 1000;
+                    setTimeout(() => { activeFill.style.width = "100%"; activeFill.style.transitionDuration = duracao + "ms"; }, 50);
+                    storyTimeout = setTimeout(() => { indexStoryAtual++; mostrarStoryIndex(); }, duracao);
+                };
+            } else {
+                const img = document.createElement('img'); img.src = item.media; img.className = "story-display-media"; displayBox.appendChild(img);
+                setTimeout(() => { activeFill.style.width = "100%"; activeFill.style.transitionDuration = "4000ms"; }, 50);
+                storyTimeout = setTimeout(() => { indexStoryAtual++; mostrarStoryIndex(); }, 4000);
+            }
+        }
+
+        function fecharStoryViewer() {
+            clearTimeout(storyTimeout);
+            document.getElementById('modal-ver-story').style.display = 'none';
+            document.getElementById('story-media-box').innerHTML = "";
+        }
+
+        function ajustarCamposUpload() {
+            const tipo = document.getElementById('upload-tipo').value;
+            document.getElementById('campo-legenda-feed').style.display = tipo === 'feed' ? 'block' : 'none';
+        }
+
+        // SISTEMA ATUALIZADO: ENVIO INFINITO COM BARRA DE PROGRESSO VISUAL REAL
+        function enviarPost() {
+            if(!tM) return alert("Por favor, selecione uma mídia primeiro.");
+            
+            const btnPub = document.getElementById('btn-publicar');
+            const btnCancel = document.getElementById('btn-cancelar-post');
+            const containerProgresso = document.getElementById('container-progresso-post');
+            const barraProgresso = document.getElementById('bar-progresso-post');
+            const textoProgresso = document.getElementById('txt-progresso-post');
+            const tipoDestino = document.getElementById('upload-tipo').value;
+
+            // Altera interface para carregamento
+            btnPub.style.display = "none";
+            btnCancel.style.display = "none";
+            containerProgresso.style.display = "block";
+
+            let progressoAtual = 0;
+            // Simula o progresso proporcional ao envio estrutural
+            let intervaloProgresso = setInterval(() => {
+                progressoAtual += Math.floor(Math.random() * 15) + 5;
+                if(progressoAtual >= 90) {
+                    progressoAtual = 93;
+                    clearInterval(intervaloProgresso);
+                }
+                barraProgresso.style.width = progressoAtual + "%";
+                textoProgresso.innerText = progressoAtual + "%";
+            }, 150);
+
+            function concluirEnvioUI() {
+                barraProgresso.style.width = "100%";
+                textoProgresso.innerText = "100% Concluído!";
+                setTimeout(() => {
+                    clearInterval(intervaloProgresso);
+                    fecharModais();
+                    // Reseta os inputs permitindo publicações infinitas em sequência
+                    document.getElementById('post-legenda').value = "";
+                    document.getElementById('post-file-main').value = "";
+                    tM = "";
+                    containerProgresso.style.display = "none";
+                    barraProgresso.style.width = "0%";
+                    textoProgresso.innerText = "0%";
+                    btnPub.style.display = "block";
+                    btnCancel.style.display = "block";
+                    
+                    if(tipoDestino === 'story') carregarStoriesNoTopo();
+                    else carregarFeed();
+                }, 600);
+            }
+
+            if (tipoDestino === 'story') {
+                fb.ref('stories').push({
+                    uid: meuUser.id, media: tM, timestamp: Date.now()
+                }).then(() => { concluirEnvioUI(); });
+            } else {
+                fb.ref('posts').push({
+                    uid: meuUser.id, nome: meuUser.nome, media: tM,
+                    legenda: document.getElementById('post-legenda').value, timestamp: Date.now()
+                }).then(() => { concluirEnvioUI(); });
+            }
+        }
+
+        // FEED TRADICIONAL
         function carregarFeed() {
             fb.ref('seguindo/' + meuUser.id).once('value', snapSeguindo => {
                 let listaSeguidos = [];
                 snapSeguindo.forEach(s => { if(s.val() === true) listaSeguidos.push(s.key); });
 
                 fb.ref('posts').on('value', snap => {
-                    const div = document.getElementById('aba-feed'); div.innerHTML = "";
+                    const div = document.getElementById('feed-posts-stream'); div.innerHTML = "";
                     let posts = [];
                     snap.forEach(p => { 
                         let dados = p.val();
-                        if(listaSeguidos.includes(dados.uid) && dados.uid !== meuUser.id) {
-                            posts.push({key: p.key, ...dados}); 
-                        }
+                        if(listaSeguidos.includes(dados.uid) && dados.uid !== meuUser.id) { posts.push({key: p.key, ...dados}); }
                     });
                     if(posts.length === 0) {
                         div.innerHTML = `<p style="text-align:center; margin-top:40px; color:#999; padding:20px;">O feed está limpo. Siga perfis na busca para ver novos posts!</p>`;
@@ -350,14 +560,11 @@
         function renderPost(id, p, meu) {
             const possuiMedia = p && p.media;
             const ehVideo = possuiMedia && typeof p.media === 'string' && p.media.includes('video');
-            
-            let numLikes = 0;
-            let jaCurtiu = false;
+            let numLikes = 0; let jaCurtiu = false;
             if(p.likesRef) {
                 numLikes = Object.keys(p.likesRef).length;
                 if(p.likesRef[meuUser.id]) jaCurtiu = true;
             }
-
             return `
             <div class="post-card">
                 <div style="padding:10px; font-size:11px; display:flex; justify-content:space-between; align-items:center;">
@@ -377,21 +584,13 @@
 
         function alternarLike(postId) {
             const refLike = fb.ref(`posts/${postId}/likesRef/${meuUser.id}`);
-            refLike.once('value', snap => {
-                if(snap.exists()) {
-                    refLike.remove();
-                } else {
-                    refLike.set(true);
-                }
-            });
+            refLike.once('value', snap => { if(snap.exists()) refLike.remove(); else refLike.set(true); });
         }
 
-        // BUSCA
         function buscarReal() {
             const b = document.getElementById('input-busca').value.toLowerCase().trim();
             const r = document.getElementById('resultados-busca'); r.innerHTML = "";
             if(b.length < 1) return;
-            
             fb.ref('usuarios').once('value', snap => {
                 snap.forEach(u => { 
                     const uid = u.key; const dados = u.val();
@@ -410,20 +609,15 @@
             });
         }
 
-        // VISITAR PERFIL DE OUTROS
         function visitarPerfil(uid) {
-            usuarioVisitado = uid;
-            switchTab('visita');
-            
+            usuarioVisitado = uid; switchTab('visita');
             fb.ref('usuarios/' + uid).once('value', snap => {
                 const u = snap.val();
                 document.getElementById('visita-nome').innerText = u.nome || uid;
                 document.getElementById('visita-at').innerText = "@" + uid;
                 document.getElementById('visita-foto').src = u.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-                
                 const vCapa = document.getElementById('visita-capa');
-                if(u.capa) vCapa.style.backgroundImage = `url('${u.capa}')`;
-                else vCapa.style.backgroundImage = "none";
+                if(u.capa) vCapa.style.backgroundImage = `url('${u.capa}')`; else vCapa.style.backgroundImage = "none";
 
                 document.getElementById('btn-visita-chat').onclick = () => { abrirChat(uid); switchTab('chat'); };
 
@@ -441,11 +635,8 @@
                 });
 
                 const isPrivada = u.privacidade === 'privada';
-
                 fb.ref(`seguindo/${meuUser.id}/${uid}`).on('value', s => {
-                    const seguindo = s.val() === true;
-                    const btn = document.getElementById('btn-visita-seguir');
-                    
+                    const seguindo = s.val() === true; const btn = document.getElementById('btn-visita-seguir');
                     if(seguindo) {
                         btn.innerText = "Seguindo"; btn.className = "btn-seguir seguindo";
                         document.getElementById('visita-bloqueio').style.display = "none";
@@ -453,7 +644,6 @@
                         carregarGridOutro(uid);
                     } else {
                         btn.innerText = "Seguir"; btn.className = "btn-seguir nao-seguindo";
-                        
                         if(isPrivada) {
                             document.getElementById('visita-bloqueio').style.display = "block";
                             document.getElementById('visita-grid').style.display = "none";
@@ -471,14 +661,7 @@
             if(!usuarioVisitado) return;
             const refSeguindo = fb.ref(`seguindo/${meuUser.id}/${usuarioVisitado}`);
             const refSeguidores = fb.ref(`seguidores/${usuarioVisitado}/${meuUser.id}`);
-            
-            refSeguindo.once('value', snap => {
-                if(snap.val() === true) {
-                    refSeguindo.remove(); refSeguidores.remove();
-                } else {
-                    refSeguindo.set(true); refSeguidores.set(true);
-                }
-            });
+            refSeguindo.once('value', snap => { if(snap.val() === true) { refSeguindo.remove(); refSeguidores.remove(); } else { refSeguindo.set(true); refSeguidores.set(true); } });
         }
 
         function carregarGridOutro(uid) {
@@ -495,171 +678,79 @@
             });
         }
 
-        // NOVO: ABA DE DETALHES DE POSTAGENS DA PESSOA VISITADA
         function verDetalhesVisita(uid) {
             switchTab('detalhes-visita');
             fb.ref('posts').on('value', snap => {
                 const div = document.getElementById('lista-detalhes-visita'); div.innerHTML = "";
                 let postsEncontrados = [];
-                snap.forEach(p => { 
-                    if(p.val().uid === uid) postsEncontrados.push({id: p.key, val: p.val()}); 
-                });
-                postsEncontrados.reverse().forEach(item => {
-                    div.innerHTML += renderPost(item.id, item.val(), false);
-                });
+                snap.forEach(p => { if(p.val().uid === uid) postsEncontrados.push({id: p.key, val: p.val()}); });
+                postsEncontrados.reverse().forEach(item => { div.innerHTML += renderPost(item.id, item.val(), false); });
             });
         }
 
-        // MEU PERFIL
         function carregarPerfil() {
             fb.ref('usuarios/'+meuUser.id).once('value', uSnap => {
-                const u = uSnap.val();
-                if(u) {
-                    meuUser = u;
-                    localStorage.setItem('king_session', JSON.stringify(u));
-                }
-                
+                const u = uSnap.val(); if(u) { meuUser = u; localStorage.setItem('king_session', JSON.stringify(u)); }
                 document.getElementById('view-nome').innerText = meuUser.nome;
                 document.getElementById('view-at').innerText = "@" + meuUser.id;
                 document.getElementById('view-foto').src = meuUser.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
                 document.getElementById('view-privacidade').innerText = meuUser.privacidade === 'privada' ? "🔒 Conta Privada" : "🌐 Conta Pública";
-
-                const mCapa = document.getElementById('view-capa');
-                if(meuUser.capa) mCapa.style.backgroundImage = `url('${meuUser.capa}')`;
-                else mCapa.style.backgroundImage = "none";
+                const mCapa = document.getElementById('view-capa'); if(meuUser.capa) mCapa.style.backgroundImage = `url('${meuUser.capa}')`; else mCapa.style.backgroundImage = "none";
             });
-            
             fb.ref('posts').on('value', snap => {
-                const grid = document.getElementById('p-grid'); grid.innerHTML = "";
-                let count = 0;
+                const grid = document.getElementById('p-grid'); grid.innerHTML = ""; let count = 0;
                 snap.forEach(p => {
                     const post = p.val();
-                    if(post.uid === meuUser.id) {
-                        count++;
-                        const isVideo = post.media && typeof post.media === 'string' && post.media.includes('video');
-                        grid.innerHTML += `<div class="grid-item" onclick="verDetalhes()">${isVideo ? `<video src="${post.media}"></video>` : `<img src="${post.media}">`}</div>`;
-                    }
+                    if(post.uid === meuUser.id) { count++; const isVideo = post.media && typeof post.media === 'string' && post.media.includes('video');
+                        grid.innerHTML += `<div class="grid-item" onclick="verDetalhes()">${isVideo ? `<video src="${post.media}"></video>` : `<img src="${post.media}">`}</div>`; }
                 });
                 document.getElementById('qtd-posts').innerText = count;
             });
-
-            fb.ref('seguidores/'+meuUser.id).on('value', snap => {
-                let c = 0; snap.forEach(s => { if(s.val()===true) c++; });
-                document.getElementById('qtd-seguidores').innerText = c;
-            });
-
-            fb.ref('seguindo/'+meuUser.id).on('value', snap => {
-                let c = 0; snap.forEach(s => { if(s.val()===true) c++; });
-                document.getElementById('qtd-seguindo').innerText = c;
-            });
+            fb.ref('seguidores/'+meuUser.id).on('value', snap => { let c = 0; snap.forEach(s => { if(s.val()===true) c++; }); document.getElementById('qtd-seguidores').innerText = c; });
+            fb.ref('seguindo/'+meuUser.id).on('value', snap => { let c = 0; snap.forEach(s => { if(s.val()===true) c++; }); document.getElementById('qtd-seguindo').innerText = c; });
         }
 
         function verDetalhes() {
             switchTab('detalhes');
             fb.ref('posts').on('value', snap => {
-                const div = document.getElementById('lista-detalhes'); div.innerHTML = "";
-                let meusPosts = [];
+                const div = document.getElementById('lista-detalhes'); div.innerHTML = ""; let meusPosts = [];
                 snap.forEach(p => { if(p.val().uid === meuUser.id) meusPosts.push({id: p.key, val: p.val()}); });
-                meusPosts.reverse().forEach(item => {
-                    div.innerHTML += renderPost(item.id, item.val(), true);
-                });
+                meusPosts.reverse().forEach(item => { div.innerHTML += renderPost(item.id, item.val(), true); });
             });
         }
 
         function abrirModalRelacoes(tipo) {
             document.getElementById('modal-relacoes').style.display = 'flex';
             document.getElementById('titulo-modal-relacoes').innerText = tipo === 'seguidores' ? 'Meus Seguidores' : 'Pessoas que Sigo';
-            const corpo = document.getElementById('corpo-modal-relacoes');
-            corpo.innerHTML = "<p style='color:#999;'>Carregando lista...</p>";
-
+            const corpo = document.getElementById('corpo-modal-relacoes'); corpo.innerHTML = "<p style='color:#999;'>Carregando...</p>";
             fb.ref(`${tipo}/${meuUser.id}`).once('value', snap => {
-                corpo.innerHTML = "";
-                let promises = [];
-                snap.forEach(item => {
-                    if(item.val() === true) {
-                        promises.push(fb.ref('usuarios/'+item.key).once('value'));
-                    }
-                });
-
-                if(promises.length === 0) {
-                    corpo.innerHTML = "<p style='color:#999; text-align:center;'>Nenhum usuário nesta lista.</p>";
-                    return;
-                }
-
+                corpo.innerHTML = ""; let promises = []; snap.forEach(item => { if(item.val() === true) promises.push(fb.ref('usuarios/'+item.key).once('value')); });
+                if(promises.length === 0) { corpo.innerHTML = "<p style='color:#999;'>Ninguém listado.</p>"; return; }
                 Promise.all(promises).then(resultados => {
-                    resultados.forEach(uSnap => {
-                        const dados = uSnap.val();
-                        if(dados) {
-                            const foto = dados.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-                            corpo.innerHTML += `
-                                <div class="user-list-item" onclick="fecharModais(); document.getElementById('btn-voltar-busca-contexto').onclick = () => { switchTab('perfil'); }; visitarPerfil('${dados.id}')" style="cursor:pointer;">
-                                    <img src="${foto}">
-                                    <div>
-                                        <div style="font-weight:bold;">${dados.nome}</div>
-                                        <div style="color:#666; font-size:12px;">@${dados.id}</div>
-                                    </div>
-                                </div>`;
-                        }
-                    });
+                    resultados.forEach(uSnap => { const dados = uSnap.val();
+                        if(dados) { const foto = dados.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                            corpo.innerHTML += `<div class="user-list-item" onclick="fecharModais(); document.getElementById('btn-voltar-busca-contexto').onclick = () => { switchTab('perfil'); }; visitarPerfil('${dados.id}')" style="cursor:pointer;"><img src="${foto}"><div><div style="font-weight:bold;">${dados.nome}</div><div style="color:#666; font-size:12px;">@${dados.id}</div></div></div>`; } });
                 });
             });
         }
 
-        // CHAT
         function carregarConversas() {
             fb.ref('conversas/'+meuUser.id).on('value', snapConversas => {
-                const boxLista = document.getElementById('lista-conversas'); boxLista.innerHTML = "";
-                let caminhos = [];
-                
+                const boxLista = document.getElementById('lista-conversas'); boxLista.innerHTML = ""; let caminhos = [];
                 snapConversas.forEach(c => { caminhos.push(c.key); });
-
-                if(caminhos.length === 0) {
-                    boxLista.innerHTML = "<p style='text-align:center; margin-top:40px; color:#999;'>Nenhuma conversa ativa.</p>";
-                    return;
-                }
-
+                if(caminhos.length === 0) { boxLista.innerHTML = "<p style='text-align:center; margin-top:40px; color:#999;'>Nenhuma conversa.</p>"; return; }
                 caminhos.forEach(idAlvo => {
                     fb.ref('usuarios/'+idAlvo).once('value', uSnap => {
                         const perfilAlvo = uSnap.val() || { id: idAlvo, nome: idAlvo, foto: '' };
                         const chatID = meuUser.id < idAlvo ? meuUser.id+"_"+idAlvo : idAlvo+"_"+meuUser.id;
-                        
                         fb.ref('chats/'+chatID).limitToLast(1).on('value', msgSnap => {
-                            let ultimaMsgText = "Nenhuma mensagem.";
-                            let msgData = null;
-                            
-                            msgSnap.forEach(m => { msgData = m.val(); ultimaMsgText = m.val().txt; });
-
+                            let ultimaMsgText = "Nenhuma mensagem."; let msgData = null; msgSnap.forEach(m => { msgData = m.val(); ultimaMsgText = m.val().txt; });
                             fb.ref('chats/'+chatID).once('value', countSnap => {
-                                let naoLidas = 0;
-                                countSnap.forEach(m => {
-                                    let msg = m.val();
-                                    if(msg.de === idAlvo && msg.lida !== true) naoLidas++;
-                                });
-
-                                let itemID = `item-chat-${idAlvo}`;
-                                let elementoExistente = document.getElementById(itemID);
-                                if(elementoExistente) elementoExistente.remove();
-
+                                let naoLidas = 0; countSnap.forEach(m => { let msg = m.val(); if(msg.de === idAlvo && msg.lida !== true) naoLidas++; });
+                                let itemID = `item-chat-${idAlvo}`; let elementoExistente = document.getElementById(itemID); if(elementoExistente) elementoExistente.remove();
                                 const fotoUrl = perfilAlvo.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-                                
-                                let vistoIcon = "";
-                                if(msgData && msgData.de === meuUser.id) {
-                                    if(msgData.lida === true) vistoIcon = "<span class='check-icon read'>✓✓</span> ";
-                                    else vistoIcon = "<span class='check-icon'>✓✓</span> ";
-                                }
-
-                                const htmlCard = `
-                                <div id="${itemID}" class="conversa-item" onclick="abrirChat('${idAlvo}')">
-                                    <img src="${fotoUrl}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
-                                    <div class="chat-info">
-                                        <div class="chat-row-top">
-                                            <strong>${perfilAlvo.nome}</strong>
-                                        </div>
-                                        <div class="chat-last-msg">${vistoIcon}${ultimaMsgText}</div>
-                                    </div>
-                                    ${naoLidas > 0 ? `<div class="chat-unread-badge">${naoLidas}</div>` : ''}
-                                </div>`;
-                                
+                                let vistoIcon = ""; if(msgData && msgData.de === meuUser.id) vistoIcon = msgData.lida === true ? "<span class='check-icon read'>✓✓</span> " : "<span class='check-icon'>✓✓</span> ";
+                                const htmlCard = `<div id="${itemID}" class="conversa-item" onclick="abrirChat('${idAlvo}')"><img src="${fotoUrl}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;"><div class="chat-info"><div class="chat-row-top"><strong>${perfilAlvo.nome}</strong></div><div class="chat-last-msg">${vistoIcon}${ultimaMsgText}</div></div>${naoLidas > 0 ? `<div class="chat-unread-badge">${naoLidas}</div>` : ''}</div>`;
                                 boxLista.innerHTML = htmlCard + boxLista.innerHTML;
                             });
                         });
@@ -670,156 +761,56 @@
 
         function escutarMensagensGlobais() {
             fb.ref('conversas/'+meuUser.id).on('value', snap => {
-                let contagemTotal = 0;
-                let caminhos = [];
-                snap.forEach(c => { caminhos.push(c.key); });
-
-                if(caminhos.length === 0) {
-                    document.getElementById('badge-total-conversas').style.display = 'none';
-                    return;
-                }
-
+                let caminhos = []; snap.forEach(c => { caminhos.push(c.key); });
+                if(caminhos.length === 0) { document.getElementById('badge-total-conversas').style.display = 'none'; return; }
                 let promises = caminhos.map(idAlvo => {
                     const chatID = meuUser.id < idAlvo ? meuUser.id+"_"+idAlvo : idAlvo+"_"+meuUser.id;
-                    return fb.ref('chats/'+chatID).once('value').then(chatSnap => {
-                        let subCont = 0;
-                        chatSnap.forEach(m => {
-                            let msg = m.val();
-                            if(msg.de === idAlvo && msg.lida !== true) subCont++;
-                        });
-                        return subCont;
-                    });
+                    return fb.ref('chats/'+chatID).once('value').then(chatSnap => { let subCont = 0; chatSnap.forEach(m => { let msg = m.val(); if(msg.de === idAlvo && msg.lida !== true) subCont++; }); return subCont; });
                 });
-
                 Promise.all(promises).then(resultados => {
-                    contagemTotal = resultados.reduce((acc, curr) => acc + curr, 0);
-                    const b = document.getElementById('badge-total-conversas');
-                    if(contagemTotal > 0) { b.innerText = contagemTotal; b.style.display = 'block'; }
-                    else { b.style.display = 'none'; }
+                    let contagemTotal = Math.max(0, resultados.reduce((acc, curr) => acc + curr, 0)); const b = document.getElementById('badge-total-conversas');
+                    if(contagemTotal > 0) { b.innerText = contagemTotal; b.style.display = 'block'; } else { b.style.display = 'none'; }
                 });
             });
         }
 
         function abrirChat(id) {
-            chatAtivo = id;
-            document.getElementById('janela-chat').style.display = 'flex';
-            
-            fb.ref('usuarios/'+id).once('value', snap => {
-                document.getElementById('chat-nome-titulo').innerText = (snap.val() && snap.val().nome) || id;
-            });
-
+            chatAtivo = id; document.getElementById('janela-chat').style.display = 'flex';
+            fb.ref('usuarios/'+id).once('value', snap => { document.getElementById('chat-nome-titulo').innerText = (snap.val() && snap.val().nome) || id; });
             const chatID = meuUser.id < id ? meuUser.id+"_"+id : id+"_"+meuUser.id;
-            
             fb.ref('chats/'+chatID).on('value', snap => {
                 const box = document.getElementById('chat-msgs'); box.innerHTML = "";
-                
-                snap.forEach(m => {
-                    const info = m.val();
-                    const msgKey = m.key;
-
-                    if(info.de === id && info.lida !== true) {
-                        fb.ref(`chats/${chatID}/${msgKey}`).update({ lida: true });
-                    }
-
-                    let vistoHtml = "";
-                    if(info.de === meuUser.id) {
-                        if(info.lida === true) vistoHtml = "<span class='check-icon read'>✓✓</span>";
-                        else vistoHtml = "<span class='check-icon'>✓✓</span>";
-                    }
-
-                    box.innerHTML += `
-                        <div class="m ${info.de === meuUser.id ? 'me' : 'him'}">
-                            <div>${info.txt}</div>
-                            <div class="msg-meta">${vistoHtml}</div>
-                        </div>`;
+                snap.forEach(m => { const info = m.val(); const msgKey = m.key;
+                    if(info.de === id && info.lida !== true) fb.ref(`chats/${chatID}/${msgKey}`).update({ lida: true });
+                    let vistoHtml = ""; if(info.de === meuUser.id) vistoHtml = info.lida === true ? "<span class='check-icon read'>✓✓</span>" : "<span class='check-icon'>✓✓</span>";
+                    box.innerHTML += `<div class="m ${info.de === meuUser.id ? 'me' : 'him'}"><div>${info.txt}</div><div class="msg-meta">${vistoHtml}</div></div>`;
                 });
                 box.scrollTop = box.scrollHeight;
             });
         }
 
         function enviarMsg() {
-            const input = document.getElementById('msg-input');
-            if(!input.value || !chatAtivo) return;
+            const input = document.getElementById('msg-input'); if(!input.value || !chatAtivo) return;
             const chatID = meuUser.id < chatAtivo ? meuUser.id+"_"+chatAtivo : chatAtivo+"_"+meuUser.id;
-            
-            fb.ref('chats/'+chatID).push({ 
-                de: meuUser.id, 
-                txt: input.value,
-                lida: false,
-                timestamp: Date.now()
-            });
-
-            fb.ref(`conversas/${meuUser.id}/${chatAtivo}`).set(true);
-            fb.ref(`conversas/${chatAtivo}/${meuUser.id}`).set(true);
+            fb.ref('chats/'+chatID).push({ de: meuUser.id, txt: input.value, lida: false, timestamp: Date.now() });
+            fb.ref(`conversas/${meuUser.id}/${chatAtivo}`).set(true); fb.ref(`conversas/${chatAtivo}/${meuUser.id}`).set(true);
             input.value = "";
         }
 
-        // CONVERSOR MULTIUSO 
-        function converte(input, t) {
-            const file = input.files[0];
-            if (!file) return;
-            
-            if(file.size > 2.5 * 1024 * 1024) {
-                alert("O arquivo excede o limite. Selecione mídias de até 2.5MB.");
-                input.value = "";
-                return;
-            }
-
-            const r = new FileReader();
-            r.onload = e => { 
-                if(t==='midia') tM = e.target.result; 
-                if(t==='perfil-foto') tP = e.target.result; 
-                if(t==='perfil-capa') tC = e.target.result; 
-            };
-            r.readAsDataURL(file);
-        }
-
-        function enviarPost() {
-            if(!tM) return alert("Selecione um arquivo de mídia primeiro!");
-            const btn = document.getElementById('btn-publicar');
-            btn.disabled = true; btn.innerText = "PUBLICANDO...";
-
-            fb.ref('posts').push({
-                uid: meuUser.id, nome: meuUser.nome, media: tM,
-                legenda: document.getElementById('post-legenda').value, data: Date.now()
-            }).then(() => { 
-                fecharModais(); 
-                document.getElementById('post-legenda').value = "";
-                document.getElementById('post-file-main').value = "";
-                tM = ""; 
-                carregarFeed(); 
-            }).catch(err => {
-                alert("Falha ao salvar dados.");
-                btn.disabled = false; btn.innerText = "PUBLICAR";
-            });
+        function convertePerfil(input, t) {
+            const file = input.files[0]; if (!file) return;
+            const r = new FileReader(); r.onload = e => { if(t==='perfil-foto') tP = e.target.result; if(t==='perfil-capa') tC = e.target.result; }; r.readAsDataURL(file);
         }
 
         function salvarPerfil() {
-            const n = document.getElementById('edit-nome').value;
-            const priv = document.getElementById('edit-privacidade').value;
-            
-            if(n) meuUser.nome = n; 
-            if(tP) meuUser.foto = tP;
-            if(tC) meuUser.capa = tC; 
-            meuUser.privacidade = priv; 
-
-            fb.ref('usuarios/'+meuUser.id).update(meuUser).then(() => { 
-                localStorage.setItem('king_session', JSON.stringify(meuUser)); 
-                fecharModais(); 
-                tP = ""; tC = "";
-                carregarPerfil(); 
-            });
+            const n = document.getElementById('edit-nome').value; const priv = document.getElementById('edit-privacidade').value;
+            if(n) meuUser.nome = n; if(tP) meuUser.foto = tP; if(tC) meuUser.capa = tC; meuUser.privacidade = priv;
+            fb.ref('usuarios/'+meuUser.id).update(meuUser).then(() => { localStorage.setItem('king_session', JSON.stringify(meuUser)); fecharModais(); tP = ""; tC = ""; carregarPerfil(); });
         }
 
         function apagar(id) { if(confirm("Apagar postagem?")) fb.ref('posts/'+id).remove().then(() => { if(document.getElementById('aba-detalhes').classList.contains('active')) verDetalhes(); }); }
-        function abrirUpload() { btn = document.getElementById('btn-publicar'); btn.disabled = false; btn.innerText = "PUBLICAR"; tM = ""; document.getElementById('modal-post').style.display='flex'; }
-        
-        function abrirEdit() { 
-            document.getElementById('edit-nome').value = meuUser.nome || "";
-            document.getElementById('edit-privacidade').value = meuUser.privacidade || "publica";
-            document.getElementById('modal-edit').style.display='flex'; 
-        }
-        
+        function abrirUpload() { document.getElementById('btn-publicar').style.display = "block"; document.getElementById('btn-cancelar-post').style.display = "block"; document.getElementById('container-progresso-post').style.display = "none"; tM = ""; ajustarCamposUpload(); document.getElementById('modal-post').style.display='flex'; }
+        function abrirEdit() { document.getElementById('edit-nome').value = meuUser.nome || ""; document.getElementById('edit-privacidade').value = meuUser.privacidade || "publica"; document.getElementById('modal-edit').style.display='flex'; }
         function abrirConfig() { document.getElementById('modal-config').style.display='flex'; }
         function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
         function fecharChat() { document.getElementById('janela-chat').style.display = 'none'; chatAtivo = null; carregarConversas(); }
