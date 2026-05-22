@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KINGConnect ELITE v38</title>
+    <title>KINGConnect ELITE v48</title>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
 
@@ -26,7 +26,6 @@
         .nav-btn { cursor: pointer; color: #fff; opacity: 0.6; text-align: center; font-size: 11px; transition: 0.3s; position: relative; }
         .nav-btn.active { opacity: 1; border-bottom: 2px solid #fff; padding-bottom: 5px; }
         .nav-btn img { width: 24px; filter: invert(1); display: block; margin: 0 auto 5px; }
-        .badge-global { position: absolute; top: -5px; right: 5px; background: red; color: #fff; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px; }
 
         /* Main Area */
         .main { flex: 1; display: flex; flex-direction: column; background: #fff; position: relative; overflow: hidden; }
@@ -35,71 +34,66 @@
         .aba { display: none; width: 100%; height: 100%; }
         .aba.active { display: block; }
 
-        /* Barra de Stories */
-        .stories-wrapper { width: 100%; max-width: 450px; margin: 0 auto; display: flex; gap: 12px; padding: 12px 15px; overflow-x: auto; border-bottom: 1px solid #eee; background: #fff; scrollbar-width: none; }
-        .stories-wrapper::-webkit-scrollbar { display: none; }
-        .story-circle { display: flex; flex-direction: column; align-items: center; font-size: 11px; font-weight: bold; cursor: pointer; min-width: 65px; text-align: center; }
-        .story-avatar-container { width: 56px; height: 56px; border-radius: 50%; padding: 2px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
-        .story-avatar-container img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #fff; background: #fff; }
-
-        /* Visualizador de Story */
-        #modal-ver-story { position: fixed; inset: 0; background: #000; z-index: 6000; display: none; flex-direction: column; justify-content: center; align-items: center; }
-        .story-top-bar { position: absolute; top: 15px; left: 0; right: 0; display: flex; flex-direction: column; gap: 8px; padding: 0 15px; z-index: 10; }
-        .story-progress-container { display: flex; gap: 4px; width: 100%; }
-        .story-progress-bar { height: 2px; flex: 1; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden; }
-        .story-progress-fill { height: 100%; width: 0%; background: #fff; transition: width linear; }
-        .story-user-info { display: flex; justify-content: space-between; align-items: center; color: #fff; font-weight: bold; font-size: 14px; }
-        .story-display-media { max-width: 100%; max-height: 85vh; object-fit: contain; }
-
-        /* Barra de Progresso do Upload */
-        .upload-progress-container { width: 100%; background: #eee; height: 14px; border-radius: 10px; margin: 15px 0; display: none; overflow: hidden; position: relative; }
-        .upload-progress-bar { height: 100%; width: 0%; background: #000; transition: width 0.1s linear; }
-        .upload-progress-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: #fff; mix-blend-mode: difference; }
+        /* Carrossel de Stories */
+        .stories-wrapper { display: flex; gap: 12px; padding: 15px; border-bottom: 1px solid #eee; overflow-x: auto; background: #fafafa; width: 100%; }
+        .story-circle { width: 64px; height: 64px; border-radius: 50%; border: 3px solid #000; padding: 2px; cursor: pointer; flex-shrink: 0; position: relative; }
+        .story-circle img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .story-add-badge { position: absolute; bottom: 0; right: 0; background: #000; color: #fff; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; border: 2px solid #fff; }
+        .story-username { font-size: 10px; text-align: center; color: #333; margin-top: 4px; max-width: 64px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
         /* Banner de Capa */
-        .perfil-capa-container { width: 100%; height: 140px; background: #e0e0e0; position: relative; background-size: cover; background-position: center; }
+        .perfil-capa-container { width: 100%; height: 180px; background: #1a1a1a; position: relative; background-size: contain; background-repeat: no-repeat; background-position: center; border-bottom: 1px solid #eee; }
 
-        /* Cards do Feed */
-        .post-card { max-width: 350px; margin: 12px auto; border: 1px solid #eee; border-radius: 12px; background: #fff; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .media-container { width: 100%; background: #000; position: relative; min-height: 200px; display: flex; justify-content: center; align-items: center; }
-        .post-media { max-width: 100%; max-height: 380px; display: block; }
+        /* Cards do Feed 9:16 Vertical */
+        .post-card { max-width: 430px; width: 100%; margin: 15px auto; border: 1px solid #eee; border-radius: 12px; background: #fff; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .media-container { width: 100%; background: #000; position: relative; aspect-ratio: 9 / 16; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        .post-media { width: 100%; height: 100%; object-fit: contain; display: block; background: #000; }
 
-        /* Profile Layout */
+        /* Grade Miniaturas */
         .profile-stats { display: flex; justify-content: center; gap: 20px; margin: 15px 0; font-size: 14px; }
         .stat-box { text-align: center; cursor: pointer; }
         .stat-box span { display: block; font-weight: bold; font-size: 18px; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 8px; }
-        .grid-item { aspect-ratio: 1/1; cursor: pointer; background: #000; overflow: hidden; position: relative; border-radius: 4px; }
-        .grid-item img, .grid-item video { width: 100%; height: 100%; object-fit: cover; }
         
-        .btn-seguir { padding: 6px 20px; border-radius: 20px; border: none; font-weight: bold; font-size: 13px; cursor: pointer; }
+        .grid-miniaturas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; padding: 5px; width: 100%; }
+        .grid-item-mini { aspect-ratio: 1 / 1; background: #000; overflow: hidden; cursor: pointer; position: relative; border-radius: 4px; }
+        .grid-item-mini img { width: 100%; height: 100%; object-fit: cover; }
+        .video-icon-badge { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.7); color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; pointer-events: none; font-weight: bold; }
+        
+        .btn-seguir { padding: 8px 22px; border-radius: 20px; border: none; font-weight: bold; font-size: 13px; cursor: pointer; }
         .btn-seguir.nao-seguindo { background: #000; color: #fff; }
         .btn-seguir.seguindo { background: #eee; color: #000; }
 
         /* Chat Layout */
-        .conversa-item { display: flex; align-items: center; gap: 12px; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; background: #fff; position: relative; }
+        .conversa-item { display: flex; align-items: center; gap: 12px; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; background: #fff; }
+        .conversa-item:hover { background: #fdfdfd; }
         .chat-info { flex: 1; display: flex; flex-direction: column; gap: 3px; overflow: hidden; }
-        .chat-row-top { display: flex; justify-content: space-between; align-items: center; }
-        .chat-last-msg { font-size: 13px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 4px; }
-        .chat-unread-badge { background: #000; color: #fff; font-size: 11px; font-weight: bold; min-width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+        .chat-last-msg { font-size: 13px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         /* Janela de Mensagens */
         #janela-chat { position: absolute; inset: 0; background: #fff; z-index: 200; display: none; flex-direction: column; }
         #chat-msgs { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 8px; background: #f9f9f9; }
-        .m { padding: 10px 14px; border-radius: 16px; max-width: 75%; font-size: 14px; display: flex; flex-direction: column; position: relative; word-wrap: break-word; }
+        .m { padding: 10px 14px; border-radius: 16px; max-width: 75%; font-size: 14px; word-wrap: break-word; }
         .m.me { align-self: flex-end; background: #000; color: #fff; border-bottom-right-radius: 2px; }
         .m.him { align-self: flex-start; background: #fff; color: #000; border-bottom-left-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .msg-meta { font-size: 10px; align-self: flex-end; margin-top: 4px; display: flex; align-items: center; gap: 3px; opacity: 0.7; }
-        .check-icon { font-size: 11px; font-weight: bold; display: inline-block; }
-        .check-icon.read { color: #34b7f1; }
 
         /* Modais */
         .fab { position: absolute; bottom: 85px; right: 20px; width: 55px; height: 55px; background: #000; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; z-index: 90; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
-        .modal-box { background: #fff; padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; max-height: 80vh; overflow-y: auto; }
-        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; outline: none; }
+        .modal-box { background: #fff; padding: 20px; border-radius: 12px; width: 100%; max-width: 450px; max-height: 85vh; overflow-y: auto; position: relative; }
+        
+        /* MODAL STORY TELA INTEIRA */
+        .modal-story-fullscreen { position: fixed; inset: 0; background: #000; display: none; flex-direction: column; z-index: 6000; padding: 15px; }
+        .story-progress-container { width: 100%; display: flex; gap: 4px; margin-bottom: 10px; }
+        .story-progress-bar { flex: 1; height: 3px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden; }
+        
+        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; outline: none; font-size: 14px; }
+        label { font-size: 12px; font-weight: bold; color: #555; display: block; margin-top: 10px; }
         .user-list-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #eee; }
         .user-list-item img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        
+        .post-action-btn { font-size: 12px; font-weight: bold; cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: 0.2s; }
+        .post-action-btn.edit { color: #0056b3; margin-right: 10px; }
+        .post-action-btn.delete { color: red; }
     </style>
 </head>
 <body>
@@ -124,10 +118,7 @@
     </div>
 
     <div id="sidebar" style="display:none;">
-        <div class="nav-btn" id="btn-chat" onclick="switchTab('chat')">
-            <span id="badge-total-conversas" class="badge-global" style="display:none;">0</span>
-            <img src="https://cdn-icons-png.flaticon.com/512/1380/1380338.png">Chat
-        </div>
+        <div class="nav-btn" id="btn-chat" onclick="switchTab('chat')"><img src="https://cdn-icons-png.flaticon.com/512/1380/1380338.png">Chat</div>
         <div class="nav-btn" id="btn-busca" onclick="switchTab('busca')"><img src="https://cdn-icons-png.flaticon.com/512/622/622669.png">Busca</div>
         <div class="nav-btn active" id="btn-feed" onclick="switchTab('feed')"><img src="https://cdn-icons-png.flaticon.com/512/1077/1077035.png">Feed</div>
         <div class="nav-btn" id="btn-perfil" onclick="switchTab('perfil')"><img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png">Perfil</div>
@@ -137,8 +128,8 @@
         <header><b>KINGCONNECT</b> <img src="https://cdn-icons-png.flaticon.com/512/3524/3524659.png" onclick="abrirConfig()" style="width:20px; filter:invert(1); cursor:pointer;"></header>
 
         <div id="aba-feed" class="aba active content">
-            <div id="container-stories-instagram" class="stories-wrapper"></div>
-            <div id="feed-posts-stream"></div>
+            <div id="secao-stories" class="stories-wrapper"></div>
+            <div id="feed-posts-container"></div>
         </div>
         
         <div id="aba-perfil" class="aba content">
@@ -156,11 +147,11 @@
                 </div>
                 <button onclick="abrirEdit()" style="padding:6px 15px; border-radius:20px; border:1px solid #ddd; background:#fff; font-size:11px; font-weight:bold; cursor:pointer;">Editar Perfil / Capa</button>
             </div>
-            <div id="p-grid" class="grid"></div>
+            <div id="p-grid" class="grid-miniaturas"></div>
         </div>
 
         <div id="aba-visita" class="aba content">
-            <div id="btn-voltar-busca-contexto" onclick="switchTab('busca')" style="padding:15px; font-weight:bold; cursor:pointer; border-bottom:1px solid #eee;">⬅ VOLTAR</div>
+            <div onclick="switchTab('busca')" style="padding:15px; font-weight:bold; cursor:pointer; border-bottom:1px solid #eee;">⬅ VOLTAR À BUSCA</div>
             <div id="visita-capa" class="perfil-capa-container"></div>
             <div style="text-align:center; padding:20px; border-bottom:1px solid #eee; margin-top:-50px; position:relative;">
                 <img id="visita-foto" src="" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid #fff; background:#fff;">
@@ -172,23 +163,14 @@
                     <div class="stat-box"> <span id="v-qtd-seguidores">0</span> seguidores </div>
                     <div class="stat-box"> <span id="v-qtd-seguindo">0</span> seguindo </div>
                 </div>
+
                 <div style="display:flex; justify-content:center; gap:10px;">
                     <button id="btn-visita-seguir" class="btn-seguir nao-seguindo" onclick="toggleSeguir()">Seguir</button>
                     <button class="btn-seguir" style="background:#000; color:#fff;" id="btn-visita-chat">Mandar Mensagem</button>
                 </div>
             </div>
-            <div id="visita-bloqueio" style="padding:40px; text-align:center; color:#777;"> 🔒 Conta privada. Siga para ver as publicações. </div>
-            <div id="visita-grid" class="grid" style="display:none;"></div>
-        </div>
-
-        <div id="aba-detalhes" class="aba content">
-            <div onclick="switchTab('perfil')" style="padding:15px; font-weight:bold; cursor:pointer; border-bottom:1px solid #eee;">⬅ VOLTAR AO MEU PERFIL</div>
-            <div id="lista-detalhes"></div>
-        </div>
-
-        <div id="aba-detalhes-visita" class="aba content">
-            <div onclick="switchTab('visita')" style="padding:15px; font-weight:bold; cursor:pointer; border-bottom:1px solid #eee;">⬅ VOLTAR AO PERFIL</div>
-            <div id="lista-detalhes-visita"></div>
+            <div id="visita-bloqueio" style="padding:40px; text-align:center; color:#777; display:none;"> 🔒 Conta privada. Siga para ver as publicações. </div>
+            <div id="visita-grid" class="grid-miniaturas"></div>
         </div>
 
         <div id="aba-busca" class="aba content">
@@ -200,6 +182,7 @@
 
         <div id="aba-chat" class="aba content">
             <div id="lista-conversas"></div>
+
             <div id="janela-chat">
                 <header style="background:#fff; color:#000; border-bottom:1px solid #eee; display:flex; align-items:center; padding:0 15px; height:60px;">
                     <span onclick="fecharChat()" style="cursor:pointer; font-size:20px;">⬅</span>
@@ -216,16 +199,53 @@
         <button class="fab" onclick="abrirUpload()">+</button>
     </div>
 
-    <div id="modal-ver-story">
-        <div class="story-top-bar">
-            <div id="story-bars-container" class="story-progress-container"></div>
-            <div class="story-user-info">
-                <span id="story-txt-user">@username</span>
-                <span onclick="fecharStoryViewer()" style="cursor:pointer; font-size:22px; padding:0 5px;">✕</span>
+    <div id="modal-story-fs" class="modal-story-fullscreen">
+        <div class="story-progress-container" id="fs-story-progress-wrapper"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; color:#fff; padding:5px 0 15px 0; font-weight:bold; z-index:10;">
+            <span id="fs-story-user" style="font-size:15px;">@usuario</span>
+            <div>
+                <button id="btn-excluir-story-ativo" onclick="excluirStoryAtual()" style="display:none; background:red; color:#fff; border:none; padding:5px 10px; margin-right:15px; font-size:11px; font-weight:bold; border-radius:4px; cursor:pointer;">Excluir Story</button>
+                <span onclick="fecharStoryFS()" style="cursor:pointer; font-size:22px; padding:5px;">✕</span>
             </div>
         </div>
-        <div id="story-media-box" style="width:100%; height:100%; display:flex; justify-content:center; align-items:center;"></div>
+        <div style="flex:1; display:flex; justify-content:center; align-items:center; overflow:hidden; background:#000; position:relative; border-radius:8px;">
+            <img id="fs-story-img" src="" style="width:100%; height:100%; object-fit:contain;">
+        </div>
     </div>
+
+    <div id="modal-ver-post" class="modal">
+        <div class="modal-box" style="padding:10px; max-width:450px;">
+            <div id="conteudo-post-expandido"></div>
+            <button onclick="fecharModais()" style="width:100%; margin-top:10px; padding:12px; background:#000; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Fechar</button>
+        </div>
+    </div>
+
+    <div id="modal-alterar-capa-avulso" class="modal"><div class="modal-box">
+        <h3>Alterar Capa da Publicação</h3>
+        <input type="file" accept="image/*" onchange="converte(this, 'capa-avulsa-post')">
+        <button onclick="salvarNovaCapaPost()" style="width:100%; margin-top:15px; padding:12px; background:#000; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">SALVAR NOVA CAPA</button>
+        <p onclick="document.getElementById('modal-alterar-capa-avulso').style.display='none'" style="text-align:center; color:red; margin-top:15px; cursor:pointer; font-weight:bold;">Cancelar</p>
+    </div></div>
+
+    <div id="modal-post" class="modal"><div class="modal-box">
+        <h3>Criar uma Publicação</h3>
+        <select id="upload-tipo" onchange="ajustarCamposUpload()">
+            <option value="post">Post Normal (Feed/Perfil)</option>
+            <option value="story">Story (Dura 24 horas)</option>
+        </select>
+        <label>Selecione o arquivo principal:</label>
+        <input type="file" id="post-file-main" accept="image/*,video/*" onchange="converte(this, 'midia')">
+        <div id="wrapper-capa-opcional">
+            <label style="color:#000; font-weight:bold;">🖼️ Definir imagem de capa personalizada (Opcional):</label>
+            <input type="file" id="post-file-cover" accept="image/*" onchange="converte(this, 'capa-post')">
+        </div>
+        <div id="wrapper-legenda-upload">
+            <label>Legenda:</label>
+            <textarea id="post-legenda" placeholder="Escreva uma legenda..."></textarea>
+        </div>
+        <button id="btn-publicar" onclick="enviarPublicacao()" style="width:100%; padding:14px; background:#000; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">COMPARTILHAR</button>
+        <p onclick="fecharModais()" style="text-align:center; color:red; margin-top:15px; cursor:pointer; font-weight:bold;">Cancelar</p>
+    </div></div>
 
     <div id="modal-relacoes" class="modal"><div class="modal-box">
         <h3 id="titulo-modal-relacoes" style="margin-bottom:15px;">Usuários</h3>
@@ -233,40 +253,21 @@
         <button onclick="fecharModais()" style="width:100%; margin-top:15px; padding:10px; background:#000; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Fechar</button>
     </div></div>
 
-    <div id="modal-post" class="modal"><div class="modal-box">
-        <h3>Criar Nova Publicação</h3>
-        <select id="upload-tipo" onchange="ajustarCamposUpload()">
-            <option value="feed">Postagem para o Feed (Até 5 min)</option>
-            <option value="story">Adicionar ao meu Story (Até 2 min)</option>
-        </select>
-        <label style="font-size:12px; font-weight:bold; color:#666;">Arquivo:</label>
-        <input type="file" id="post-file-main" accept="image/*,video/*" onchange="processarMidiaComTrava(this)">
-        
-        <div id="campo-legenda-feed">
-            <textarea id="post-legenda" placeholder="Escreva uma legenda opcional..."></textarea>
-        </div>
-
-        <div id="container-progresso-post" class="upload-progress-container">
-            <div id="bar-progresso-post" class="upload-progress-bar"></div>
-            <div id="txt-progresso-post" class="upload-progress-text">0%</div>
-        </div>
-
-        <button id="btn-publicar" onclick="enviarPost()" style="width:100%; padding:14px; background:#000; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">PUBLICAR</button>
-        <p id="btn-cancelar-post" onclick="fecharModais()" style="text-align:center; color:red; margin-top:15px; cursor:pointer; font-weight:bold;">Cancelar</p>
-    </div></div>
-
     <div id="modal-edit" class="modal"><div class="modal-box">
-        <h3>Editar Dados</h3>
-        <label style="font-size:12px; font-weight:bold; color:#555;">Nome de exibição:</label>
+        <h3>Editar Dados do Perfil</h3>
+        <label>Nome do Perfil:</label>
         <input type="text" id="edit-nome" placeholder="Nome Exibido">
-        <input type="file" accept="image/*" onchange="convertePerfil(this, 'perfil-foto')">
-        <input type="file" accept="image/*" onchange="convertePerfil(this, 'perfil-capa')">
+        <label>Foto de Perfil:</label>
+        <input type="file" accept="image/*" onchange="converte(this, 'perfil-foto')">
+        <label>Foto de Capa do Perfil:</label>
+        <input type="file" accept="image/*" onchange="converte(this, 'perfil-capa')">
+        <label>Privacidade:</label>
         <select id="edit-privacidade">
-            <option value="publica">Pública (Qualquer um vê os posts)</option>
-            <option value="privada">Privada (Só seguidores aprovados vêem os posts)</option>
+            <option value="publica">Pública</option>
+            <option value="privada">Privada</option>
         </select>
-        <button onclick="salvarPerfil()" style="width:100%; padding:14px; background:#000; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:bold; margin-top:10px;">SALVAR</button>
-        <p onclick="fecharModais()" style="text-align:center; margin-top:15px; cursor:pointer; font-weight:bold; color:#666;">Fechar</p>
+        <button onclick="salvarPerfil()" style="width:100%; padding:14px; background:#000; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">SALVAR</button>
+        <p onclick="fecharModais()" style="text-align:center; margin-top:15px; cursor:pointer;">Fechar</p>
     </div></div>
 
     <div id="modal-config" class="modal"><div class="modal-box" style="text-align:center;">
@@ -283,8 +284,15 @@
         const fb = firebase.database();
 
         let meuUser = JSON.parse(localStorage.getItem('king_session'));
-        let tM = "", tP = "", tC = "", chatAtivo = null, usuarioVisitado = null;
-        let storyTimeout = null, listaStoriesAtivos = [], indexStoryAtual = 0;
+        let tM = "", tP = "", tC = "", tCapaPost = "", tCapaAvulsa = "", idPostCapaAlvo = "", chatAtivo = null, usuarioVisitado = null;
+        
+        let listaGlobalStoriesAtivos = []; 
+        let indiceStoryAtual = 0;
+        let temporizadorStory = null;
+
+        if(meuUser) {
+            document.addEventListener("DOMContentLoaded", () => logar(meuUser));
+        }
 
         function toggleAuth(m) {
             document.getElementById('box-login').style.display = m==='login'?'block':'none';
@@ -295,14 +303,15 @@
             const id = document.getElementById('reg-id').value.toLowerCase().trim();
             const nome = document.getElementById('reg-nome').value.trim();
             const pass = document.getElementById('reg-pass').value;
-            if(!id || !nome || !pass) return alert("Preencha todos os campos!");
-            fb.ref('usuarios/'+id).set({ id, nome, pass, foto: '', capa: '', privacidade: 'publica' }).then(() => logar({ id, nome, pass, foto: '', capa: '', privacidade: 'publica' }));
+            if(!id || !nome || !pass) return alert("Preencha tudo!");
+            fb.ref('usuarios/'+id).set({ id, nome, pass, foto: '', capa: '', privacidade: 'publica' })
+                .then(() => logar({ id, nome, pass, foto: '', capa: '', privacidade: 'publica' }));
         }
 
         function fazerLogin() {
             const id = document.getElementById('user-id').value.toLowerCase().trim();
             const pass = document.getElementById('user-pass').value;
-            if(!id || !pass) return alert("Preencha os campos de login!");
+            if(!id || !pass) return alert("Preencha os campos!");
             fb.ref('usuarios/'+id).once('value', snap => {
                 const u = snap.val();
                 if(u && u.pass === pass) logar(u);
@@ -315,24 +324,6 @@
             localStorage.setItem('king_session', JSON.stringify(user));
             document.getElementById('tela-login').style.display = 'none';
             document.getElementById('sidebar').style.display = 'flex';
-            checarUrlLinkDireto();
-            escutarMensagensGlobais();
-        }
-
-        function checarUrlLinkDireto() {
-            const urlParams = window.location.search;
-            if(urlParams && urlParams.includes('?@')) {
-                const usernameAlvo = urlParams.split('?@')[1].toLowerCase().trim();
-                if(usernameAlvo) {
-                    fb.ref('usuarios/' + usernameAlvo).once('value', snap => {
-                        if(snap.exists()) {
-                            document.getElementById('btn-voltar-busca-contexto').onclick = () => { switchTab('feed'); };
-                            visitarPerfil(usernameAlvo);
-                        } else { switchTab('feed'); }
-                    });
-                    return;
-                }
-            }
             switchTab('feed');
         }
 
@@ -341,218 +332,154 @@
         function switchTab(t) {
             document.querySelectorAll('.aba').forEach(a => a.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            const elementoAba = document.getElementById('aba-'+t);
-            if(elementoAba) elementoAba.classList.add('active');
+            
+            const targetAba = document.getElementById('aba-'+t);
+            if(targetAba) targetAba.classList.add('active');
             if(document.getElementById('btn-'+t)) document.getElementById('btn-'+t).classList.add('active');
             
-            if(t==='feed') { carregarFeed(); carregarStoriesNoTopo(); }
+            if(t==='feed') { carregarStories(); carregarFeed(); }
             if(t==='perfil') carregarPerfil();
             if(t==='chat') carregarConversas();
         }
 
-        // VERIFICAÇÃO RIGOROSA DE TEMPO (STORIES 2 MIN / FEED 5 MIN)
-        function processarMidiaComTrava(input) {
-            const arquivo = input.files[0];
-            if (!arquivo) return;
-            const tipoDestino = document.getElementById('upload-tipo').value;
+        /* STORIES CORRIGIDOS */
+        function carregarStories() {
+            const wrapper = document.getElementById('secao-stories');
+            wrapper.innerHTML = `
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <div class="story-circle" id="meu-circulo-story" onclick="clicouNoMeuStory()" style="border-color:#ccc;">
+                        <img src="${meuUser.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}">
+                        <div class="story-add-badge" id="badge-add-story">+</div>
+                    </div>
+                    <span class="story-username">Seu Story</span>
+                </div>
+            `;
+            
+            fb.ref('stories').on('value', snap => {
+                const agora = Date.now();
+                listaGlobalStoriesAtivos = [];
+                let auxAgrupados = {};
 
-            if (arquivo.type.includes('video')) {
-                const videoDummy = document.createElement('video');
-                videoDummy.preload = 'metadata';
-                videoDummy.src = URL.createObjectURL(arquivo);
-                
-                videoDummy.onloadedmetadata = function() {
-                    URL.revokeObjectURL(videoDummy.src);
-                    
-                    if (tipoDestino === 'story' && videoDummy.duration > 120) {
-                        alert("Não permitido! O vídeo para Story deve possuir no máximo 2 minutos (120 segundos).");
-                        input.value = ""; tM = ""; return;
+                snap.forEach(s => {
+                    const dados = s.val();
+                    if(dados && dados.media && (agora - dados.timestamp < 24 * 60 * 60 * 1000)) {
+                        listaGlobalStoriesAtivos.push({ key: s.key, ...dados });
+                        auxAgrupados[dados.uid] = dados;
                     }
-                    if (tipoDestino === 'feed' && videoDummy.duration > 300) {
-                        alert("Não permitido! O vídeo para o Feed deve possuir no máximo 5 minutos (300 segundos).");
-                        input.value = ""; tM = ""; return;
-                    }
-                    redirecionarParaLeitor(arquivo);
-                };
-            } else {
-                redirecionarParaLeitor(arquivo);
-            }
-        }
+                });
 
-        function redirecionarParaLeitor(file) {
-            const leitor = new FileReader();
-            leitor.onload = function(e) { tM = e.target.result; };
-            leitor.readAsDataURL(file);
-        }
+                const temMeuStory = listaGlobalStoriesAtivos.some(st => st.uid === meuUser.id);
+                const meuCirculo = document.getElementById('meu-circulo-story');
+                const minhaBadge = document.getElementById('badge-add-story');
+                if(temMeuStory && meuCirculo) {
+                    meuCirculo.style.borderColor = "#000";
+                    if(minhaBadge) minhaBadge.style.display = "none";
+                } else if(meuCirculo) {
+                    meuCirculo.style.borderColor = "#ccc";
+                    if(minhaBadge) minhaBadge.style.display = "flex";
+                }
 
-        // STORIES: 24 HORAS SEGUIDAS COM LIMPEZA FÍSICA NO FIREBASE
-        function carregarStoriesNoTopo() {
-            fb.ref('seguindo/' + meuUser.id).once('value', snapSeguindo => {
-                let sLista = [meuUser.id];
-                snapSeguindo.forEach(s => { if(s.val() === true) sLista.push(s.key); });
-
-                fb.ref('stories').on('value', snapStories => {
-                    const barra = document.getElementById('container-stories-instagram');
-                    barra.innerHTML = "";
-                    let storiesAgrupados = {};
-                    const limite24h = Date.now() - (24 * 60 * 60 * 1000);
-
-                    snapStories.forEach(st => {
-                        let dad = st.val();
-                        // Se o Story expirou de fato, apaga fisicamente do Firebase em tempo real
-                        if (dad.timestamp < limite24h) {
-                            fb.ref('stories/' + st.key).remove();
-                        } else if (sLista.includes(dad.uid)) {
-                            if (!storiesAgrupados[dad.uid]) storiesAgrupados[dad.uid] = [];
-                            storiesAgrupados[dad.uid].push({key: st.key, ...dad});
-                        }
-                    });
-
-                    Object.keys(storiesAgrupados).forEach(uid => {
-                        fb.ref('usuarios/' + uid).once('value', uSnap => {
-                            const userDados = uSnap.val() || { nome: uid, foto: '' };
-                            const fotoFinal = userDados.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-                            
-                            const divCircle = document.createElement('div');
-                            divCircle.className = "story-circle";
-                            divCircle.innerHTML = `
-                                <div class="story-avatar-container"><img src="${fotoFinal}"></div>
-                                <span style="display:block; width:60px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${uid === meuUser.id ? 'Seu Story' : uid}</span>
+                Object.keys(auxAgrupados).forEach(uid => {
+                    if(uid === meuUser.id) return;
+                    fb.ref('usuarios/'+uid).once('value', uSnap => {
+                        const u = uSnap.val();
+                        const foto = u?.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                        const idElemento = `story-user-${uid}`;
+                        if(!document.getElementById(idElemento)) {
+                            wrapper.innerHTML += `
+                                <div style="display:flex; flex-direction:column; align-items:center;" id="${idElemento}" onclick="abrirSequenciaStories('${uid}')">
+                                    <div class="story-circle">
+                                        <img src="${foto}">
+                                    </div>
+                                    <span class="story-username">@${uid}</span>
+                                </div>
                             `;
-                            divCircle.onclick = () => abrirVisualizadorStories(storiesAgrupados[uid], uid);
-                            barra.appendChild(divCircle);
-                        });
+                        }
                     });
                 });
             });
         }
 
-        function abrirVisualizadorStories(lista, uid) {
-            listaStoriesAtivos = lista; indexStoryAtual = 0;
-            document.getElementById('modal-ver-story').style.display = 'flex';
-            document.getElementById('story-txt-user').innerText = "@" + uid;
-            mostrarStoryIndex();
+        function clicouNoMeuStory() {
+            const possuiStory = listaGlobalStoriesAtivos.some(st => st.uid === meuUser.id);
+            if(possuiStory) abrirSequenciaStories(meuUser.id);
         }
 
-        function mostrarStoryIndex() {
-            clearTimeout(storyTimeout);
-            if (indexStoryAtual >= listaStoriesAtivos.length) { fecharStoryViewer(); return; }
+        function abrirSequenciaStories(uidalvo) {
+            let filtrados = listaGlobalStoriesAtivos.filter(s => s.uid === uidalvo);
+            if(filtrados.length === 0) return;
+            indiceStoryAtual = listaGlobalStoriesAtivos.findIndex(s => s.key === filtrados[0].key);
+            exibirStoryFS();
+        }
 
-            const item = listaStoriesAtivos[indexStoryAtual];
-            const displayBox = document.getElementById('story-media-box'); displayBox.innerHTML = "";
-            const barsContainer = document.getElementById('story-bars-container'); barsContainer.innerHTML = "";
-            
-            for (let i = 0; i < listaStoriesAtivos.length; i++) {
-                barsContainer.innerHTML += `<div class="story-progress-bar"><div id="s-fill-${i}" class="story-progress-fill"></div></div>`;
+        function exibirStoryFS() {
+            if(temporizadorStory) clearTimeout(temporizadorStory);
+            if(indiceStoryAtual < 0 || indiceStoryAtual >= listaGlobalStoriesAtivos.length) {
+                fecharStoryFS();
+                return;
             }
 
-            const activeFill = document.getElementById(`s-fill-${indexStoryAtual}`);
-            const ehVideo = item.media && typeof item.media === 'string' && item.media.includes('video');
-
-            if (ehVideo) {
-                const vid = document.createElement('video'); vid.src = item.media; vid.className = "story-display-media"; vid.autoplay = true; displayBox.appendChild(vid);
-                vid.onloadedmetadata = () => {
-                    let duracao = (vid.duration || 5) * 1000;
-                    setTimeout(() => { activeFill.style.width = "100%"; activeFill.style.transitionDuration = duracao + "ms"; }, 50);
-                    storyTimeout = setTimeout(() => { indexStoryAtual++; mostrarStoryIndex(); }, duracao);
-                };
-            } else {
-                const img = document.createElement('img'); img.src = item.media; img.className = "story-display-media"; displayBox.appendChild(img);
-                setTimeout(() => { activeFill.style.width = "100%"; activeFill.style.transitionDuration = "4000ms"; }, 50);
-                storyTimeout = setTimeout(() => { indexStoryAtual++; mostrarStoryIndex(); }, 4000);
-            }
-        }
-
-        function fecharStoryViewer() {
-            clearTimeout(storyTimeout);
-            document.getElementById('modal-ver-story').style.display = 'none';
-            document.getElementById('story-media-box').innerHTML = "";
-        }
-
-        function ajustarCamposUpload() {
-            const tipo = document.getElementById('upload-tipo').value;
-            document.getElementById('campo-legenda-feed').style.display = tipo === 'feed' ? 'block' : 'none';
-        }
-
-        // SISTEMA ATUALIZADO: ENVIO INFINITO COM BARRA DE PROGRESSO VISUAL REAL
-        function enviarPost() {
-            if(!tM) return alert("Por favor, selecione uma mídia primeiro.");
+            const story = listaGlobalStoriesAtivos[indiceStoryAtual];
+            document.getElementById('fs-story-user').innerText = "@" + story.uid;
+            document.getElementById('fs-story-img').src = story.media;
             
-            const btnPub = document.getElementById('btn-publicar');
-            const btnCancel = document.getElementById('btn-cancelar-post');
-            const containerProgresso = document.getElementById('container-progresso-post');
-            const barraProgresso = document.getElementById('bar-progresso-post');
-            const textoProgresso = document.getElementById('txt-progresso-post');
-            const tipoDestino = document.getElementById('upload-tipo').value;
+            const btnExcluir = document.getElementById('btn-excluir-story-ativo');
+            btnExcluir.style.display = (story.uid === meuUser.id) ? "inline-block" : "none";
 
-            // Altera interface para carregamento
-            btnPub.style.display = "none";
-            btnCancel.style.display = "none";
-            containerProgresso.style.display = "block";
+            const wrapperProgresso = document.getElementById('fs-story-progress-wrapper');
+            wrapperProgresso.innerHTML = '<div class="story-progress-bar"><div id="story-bar-fill" style="width:0%; height:100%; background:#fff; transition: width 5s linear;"></div></div>';
+            
+            document.getElementById('modal-story-fs').style.display = 'flex';
 
-            let progressoAtual = 0;
-            // Simula o progresso proporcional ao envio estrutural
-            let intervaloProgresso = setInterval(() => {
-                progressoAtual += Math.floor(Math.random() * 15) + 5;
-                if(progressoAtual >= 90) {
-                    progressoAtual = 93;
-                    clearInterval(intervaloProgresso);
+            setTimeout(() => {
+                const fill = document.getElementById('story-bar-fill');
+                if(fill) fill.style.width = "100%";
+            }, 50);
+
+            temporizadorStory = setTimeout(() => {
+                indiceStoryAtual++;
+                exibirStoryFS();
+            }, 5050);
+        }
+
+        function excluirStoryAtual() {
+            if(confirm("Deseja apagar o seu story?")) {
+                const story = listaGlobalStoriesAtivos[indiceStoryAtual];
+                if(story && story.uid === meuUser.id) {
+                    clearTimeout(temporizadorStory);
+                    fb.ref(`stories/${story.key}`).remove().then(() => {
+                        fecharStoryFS();
+                        carregarStories();
+                    });
                 }
-                barraProgresso.style.width = progressoAtual + "%";
-                textoProgresso.innerText = progressoAtual + "%";
-            }, 150);
-
-            function concluirEnvioUI() {
-                barraProgresso.style.width = "100%";
-                textoProgresso.innerText = "100% Concluído!";
-                setTimeout(() => {
-                    clearInterval(intervaloProgresso);
-                    fecharModais();
-                    // Reseta os inputs permitindo publicações infinitas em sequência
-                    document.getElementById('post-legenda').value = "";
-                    document.getElementById('post-file-main').value = "";
-                    tM = "";
-                    containerProgresso.style.display = "none";
-                    barraProgresso.style.width = "0%";
-                    textoProgresso.innerText = "0%";
-                    btnPub.style.display = "block";
-                    btnCancel.style.display = "block";
-                    
-                    if(tipoDestino === 'story') carregarStoriesNoTopo();
-                    else carregarFeed();
-                }, 600);
-            }
-
-            if (tipoDestino === 'story') {
-                fb.ref('stories').push({
-                    uid: meuUser.id, media: tM, timestamp: Date.now()
-                }).then(() => { concluirEnvioUI(); });
-            } else {
-                fb.ref('posts').push({
-                    uid: meuUser.id, nome: meuUser.nome, media: tM,
-                    legenda: document.getElementById('post-legenda').value, timestamp: Date.now()
-                }).then(() => { concluirEnvioUI(); });
             }
         }
 
-        // FEED TRADICIONAL
+        function fecharStoryFS() {
+            if(temporizadorStory) clearTimeout(temporizadorStory);
+            document.getElementById('modal-story-fs').style.display = 'none';
+        }
+
+        /* FEED & POSTS */
         function carregarFeed() {
             fb.ref('seguindo/' + meuUser.id).once('value', snapSeguindo => {
-                let listaSeguidos = [];
+                let listaSeguidos = [meuUser.id]; // Sempre vê os próprios posts no feed também
                 snapSeguindo.forEach(s => { if(s.val() === true) listaSeguidos.push(s.key); });
 
                 fb.ref('posts').on('value', snap => {
-                    const div = document.getElementById('feed-posts-stream'); div.innerHTML = "";
+                    const div = document.getElementById('feed-posts-container'); div.innerHTML = "";
                     let posts = [];
                     snap.forEach(p => { 
                         let dados = p.val();
-                        if(listaSeguidos.includes(dados.uid) && dados.uid !== meuUser.id) { posts.push({key: p.key, ...dados}); }
+                        if(dados && listaSeguidos.includes(dados.uid)) {
+                            posts.push({key: p.key, ...dados}); 
+                        }
                     });
                     if(posts.length === 0) {
-                        div.innerHTML = `<p style="text-align:center; margin-top:40px; color:#999; padding:20px;">O feed está limpo. Siga perfis na busca para ver novos posts!</p>`;
+                        div.innerHTML = `<p style="text-align:center; margin-top:40px; color:#999; padding:20px;">Nenhum post no feed. Explore a aba Busca!</p>`;
                         return;
                     }
-                    posts.reverse().forEach(post => { div.innerHTML += renderPost(post.key, post, false); });
+                    posts.reverse().forEach(post => { div.innerHTML += renderPost(post.key, post, post.uid === meuUser.id); });
                 });
             });
         }
@@ -560,33 +487,74 @@
         function renderPost(id, p, meu) {
             const possuiMedia = p && p.media;
             const ehVideo = possuiMedia && typeof p.media === 'string' && p.media.includes('video');
-            let numLikes = 0; let jaCurtiu = false;
+            let numLikes = 0, jaCurtiu = false;
             if(p.likesRef) {
                 numLikes = Object.keys(p.likesRef).length;
                 if(p.likesRef[meuUser.id]) jaCurtiu = true;
             }
+
             return `
             <div class="post-card">
-                <div style="padding:10px; font-size:11px; display:flex; justify-content:space-between; align-items:center;">
-                    <b style="cursor:pointer;" onclick="visitarPerfil('${p.uid}')">@${p.uid || 'usuario'}</b>
-                    ${meu ? `<span onclick="apagar('${id}')" style="color:red; cursor:pointer; font-weight:bold;">Remover</span>` : ''}
+                <div style="padding:12px; font-size:13px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f9f9f9;">
+                    <b style="cursor:pointer;" onclick="fecharModais(); visitarPerfil('${p.uid}')">@${p.uid || 'usuario'}</b>
+                    <div>
+                        ${meu ? `<span onclick="abrirJanelaEditarCapa('${id}')" class="post-action-btn edit">Editar Capa</span>` : ''}
+                        ${meu ? `<span onclick="apagar('${id}')" class="post-action-btn delete">Remover</span>` : ''}
+                    </div>
                 </div>
                 <div class="media-container">
                     ${possuiMedia ? (ehVideo ? `<video src="${p.media}" class="post-media" controls></video>` : `<img src="${p.media}" class="post-media">`) : ''}
                 </div>
-                <div style="padding:10px; font-size:13px;"><b>${p.nome || ''}</b> ${p.legenda || ''}</div>
-                <div style="padding:10px; border-top:1px solid #eee; display:flex; align-items:center; gap:5px;">
-                    <span onclick="alternarLike('${id}')" style="cursor:pointer; font-size:16px; filter: ${jaCurtiu ? 'none' : 'grayscale(100%)'}">❤️</span> 
-                    <span style="font-size:12px; font-weight:bold;">${numLikes}</span>
+                <div style="padding:12px; font-size:14px; line-height:1.4;"><b>${p.nome || p.uid}</b>: ${p.legenda || ''}</div>
+                <div style="padding:10px 12px; border-top:1px solid #f5f5f5; display:flex; align-items:center; gap:6px;">
+                    <span onclick="alternarLike('${id}')" style="cursor:pointer; font-size:18px; filter: ${jaCurtiu ? 'none' : 'grayscale(100%)'}">❤️</span> 
+                    <span style="font-size:13px; font-weight:bold; color:#333;">${numLikes}</span>
                 </div>
             </div>`;
         }
 
         function alternarLike(postId) {
             const refLike = fb.ref(`posts/${postId}/likesRef/${meuUser.id}`);
-            refLike.once('value', snap => { if(snap.exists()) refLike.remove(); else refLike.set(true); });
+            refLike.once('value', snap => {
+                if(snap.exists()) refLike.remove();
+                else refLike.set(true);
+            });
         }
 
+        function renderMiniatura(id, post) {
+            const ehVideo = post.media && typeof post.media === 'string' && post.media.includes('video');
+            const displayImg = post.capaPost ? post.capaPost : (ehVideo ? 'https://cdn-icons-png.flaticon.com/512/1179/1179069.png' : post.media);
+            const badge = ehVideo ? `<div class="video-icon-badge">▶ VÍDEO</div>` : '';
+            return `
+                <div class="grid-item-mini" onclick="abrirPostExpandido('${id}')">
+                    <img src="${displayImg}">
+                    ${badge}
+                </div>
+            `;
+        }
+
+        function abrirPostExpandido(postId) {
+            fb.ref(`posts/${postId}`).on('value', snap => {
+                const dados = snap.val();
+                if(!dados) { fecharModais(); return; }
+                document.getElementById('conteudo-post-expandido').innerHTML = renderPost(postId, dados, dados.uid === meuUser.id);
+                document.getElementById('modal-ver-post').style.display = 'flex';
+            });
+        }
+
+        function abrirJanelaEditarCapa(id) {
+            idPostCapaAlvo = id; tCapaAvulsa = "";
+            document.getElementById('modal-alterar-capa-avulso').style.display = 'flex';
+        }
+
+        function salvarNovaCapaPost() {
+            if(!tCapaAvulsa) return alert("Selecione um arquivo de imagem válido!");
+            fb.ref(`posts/${idPostCapaAlvo}`).update({ capaPost: tCapaAvulsa }).then(() => {
+                document.getElementById('modal-alterar-capa-avulso').style.display = 'none';
+            });
+        }
+
+        /* BUSCA & OUTROS PERFIS */
         function buscarReal() {
             const b = document.getElementById('input-busca').value.toLowerCase().trim();
             const r = document.getElementById('resultados-busca'); r.innerHTML = "";
@@ -597,12 +565,9 @@
                     if(uid.includes(b) && uid !== meuUser.id) {
                         const foto = dados.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
                         r.innerHTML += `
-                            <div onclick="document.getElementById('btn-voltar-busca-contexto').onclick = () => { switchTab('busca'); }; visitarPerfil('${uid}')" style="display: flex; align-items: center; gap: 15px; padding: 12px; border: 1px solid #eee; border-radius: 12px; cursor: pointer; background: #fff; margin-bottom:6px;">
+                            <div onclick="visitarPerfil('${uid}')" style="display: flex; align-items: center; gap: 15px; padding: 12px; border: 1px solid #eee; border-radius: 12px; cursor: pointer; background: #fff; margin-bottom:6px;">
                                 <img src="${foto}" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;">
-                                <div style="text-align: left; flex:1;">
-                                    <div style="font-weight: bold;">${dados.nome || uid}</div>
-                                    <div style="color: #777; font-size: 12px;">@${uid}</div>
-                                </div>
+                                <div style="text-align: left; flex:1;"><b>${dados.nome || uid}</b><div style="color: #777; font-size: 12px;">@${uid}</div></div>
                             </div>`;
                     }
                 });
@@ -610,33 +575,34 @@
         }
 
         function visitarPerfil(uid) {
+            if(uid === meuUser.id) return switchTab('perfil');
             usuarioVisitado = uid; switchTab('visita');
+            
             fb.ref('usuarios/' + uid).once('value', snap => {
-                const u = snap.val();
+                const u = snap.val(); if(!u) return;
                 document.getElementById('visita-nome').innerText = u.nome || uid;
                 document.getElementById('visita-at').innerText = "@" + uid;
                 document.getElementById('visita-foto').src = u.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-                const vCapa = document.getElementById('visita-capa');
-                if(u.capa) vCapa.style.backgroundImage = `url('${u.capa}')`; else vCapa.style.backgroundImage = "none";
-
-                document.getElementById('btn-visita-chat').onclick = () => { abrirChat(uid); switchTab('chat'); };
+                document.getElementById('visita-capa').style.backgroundImage = u.capa ? `url('${u.capa}')` : "none";
+                document.getElementById('btn-visita-chat').onclick = () => abrirChat(uid);
 
                 fb.ref('posts').once('value', sp => {
                     let c = 0; sp.forEach(p => { if(p.val().uid === uid) c++; });
                     document.getElementById('v-qtd-posts').innerText = c;
                 });
-                fb.ref('seguidores/' + uid).on('value', sp => {
+
+                fb.ref(`seguidores/${uid}`).on('value', sp => {
                     let c = 0; sp.forEach(s => { if(s.val()===true) c++; });
                     document.getElementById('v-qtd-seguidores').innerText = c;
                 });
-                fb.ref('seguindo/' + uid).on('value', sp => {
+                fb.ref(`seguindo/${uid}`).on('value', sp => {
                     let c = 0; sp.forEach(s => { if(s.val()===true) c++; });
                     document.getElementById('v-qtd-seguindo').innerText = c;
                 });
 
-                const isPrivada = u.privacidade === 'privada';
                 fb.ref(`seguindo/${meuUser.id}/${uid}`).on('value', s => {
-                    const seguindo = s.val() === true; const btn = document.getElementById('btn-visita-seguir');
+                    const seguindo = s.val() === true;
+                    const btn = document.getElementById('btn-visita-seguir');
                     if(seguindo) {
                         btn.innerText = "Seguindo"; btn.className = "btn-seguir seguindo";
                         document.getElementById('visita-bloqueio').style.display = "none";
@@ -644,7 +610,7 @@
                         carregarGridOutro(uid);
                     } else {
                         btn.innerText = "Seguir"; btn.className = "btn-seguir nao-seguindo";
-                        if(isPrivada) {
+                        if(u.privacidade === 'privada') {
                             document.getElementById('visita-bloqueio').style.display = "block";
                             document.getElementById('visita-grid').style.display = "none";
                         } else {
@@ -661,7 +627,10 @@
             if(!usuarioVisitado) return;
             const refSeguindo = fb.ref(`seguindo/${meuUser.id}/${usuarioVisitado}`);
             const refSeguidores = fb.ref(`seguidores/${usuarioVisitado}/${meuUser.id}`);
-            refSeguindo.once('value', snap => { if(snap.val() === true) { refSeguindo.remove(); refSeguidores.remove(); } else { refSeguindo.set(true); refSeguidores.set(true); } });
+            refSeguindo.once('value', snap => {
+                if(snap.val() === true) { refSeguindo.remove(); refSeguidores.remove(); }
+                else { refSeguindo.set(true); refSeguidores.set(true); }
+            });
         }
 
         function carregarGridOutro(uid) {
@@ -670,24 +639,12 @@
                 const grid = document.getElementById('visita-grid'); grid.innerHTML = "";
                 snap.forEach(p => {
                     const post = p.val();
-                    if(post.uid === uid) {
-                        const isVideo = post.media && typeof post.media === 'string' && post.media.includes('video');
-                        grid.innerHTML += `<div class="grid-item" onclick="verDetalhesVisita('${uid}')">${isVideo ? `<video src="${post.media}"></video>` : `<img src="${post.media}">`}</div>`;
-                    }
+                    if(post && post.uid === uid && post.media) grid.innerHTML += renderMiniatura(p.key, post);
                 });
             });
         }
 
-        function verDetalhesVisita(uid) {
-            switchTab('detalhes-visita');
-            fb.ref('posts').on('value', snap => {
-                const div = document.getElementById('lista-detalhes-visita'); div.innerHTML = "";
-                let postsEncontrados = [];
-                snap.forEach(p => { if(p.val().uid === uid) postsEncontrados.push({id: p.key, val: p.val()}); });
-                postsEncontrados.reverse().forEach(item => { div.innerHTML += renderPost(item.id, item.val(), false); });
-            });
-        }
-
+        /* MEU PERFIL DADOS */
         function carregarPerfil() {
             fb.ref('usuarios/'+meuUser.id).once('value', uSnap => {
                 const u = uSnap.val(); if(u) { meuUser = u; localStorage.setItem('king_session', JSON.stringify(u)); }
@@ -695,127 +652,168 @@
                 document.getElementById('view-at').innerText = "@" + meuUser.id;
                 document.getElementById('view-foto').src = meuUser.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
                 document.getElementById('view-privacidade').innerText = meuUser.privacidade === 'privada' ? "🔒 Conta Privada" : "🌐 Conta Pública";
-                const mCapa = document.getElementById('view-capa'); if(meuUser.capa) mCapa.style.backgroundImage = `url('${meuUser.capa}')`; else mCapa.style.backgroundImage = "none";
+                document.getElementById('view-capa').style.backgroundImage = meuUser.capa ? `url('${meuUser.capa}')` : "none";
             });
+            
             fb.ref('posts').on('value', snap => {
-                const grid = document.getElementById('p-grid'); grid.innerHTML = ""; let count = 0;
+                const grid = document.getElementById('p-grid'); grid.innerHTML = "";
+                let count = 0;
                 snap.forEach(p => {
                     const post = p.val();
-                    if(post.uid === meuUser.id) { count++; const isVideo = post.media && typeof post.media === 'string' && post.media.includes('video');
-                        grid.innerHTML += `<div class="grid-item" onclick="verDetalhes()">${isVideo ? `<video src="${post.media}"></video>` : `<img src="${post.media}">`}</div>`; }
+                    if(post && post.uid === meuUser.id) { count++; if(post.media) grid.innerHTML += renderMiniatura(p.key, post); }
                 });
                 document.getElementById('qtd-posts').innerText = count;
             });
-            fb.ref('seguidores/'+meuUser.id).on('value', snap => { let c = 0; snap.forEach(s => { if(s.val()===true) c++; }); document.getElementById('qtd-seguidores').innerText = c; });
-            fb.ref('seguindo/'+meuUser.id).on('value', snap => { let c = 0; snap.forEach(s => { if(s.val()===true) c++; }); document.getElementById('qtd-seguindo').innerText = c; });
-        }
 
-        function verDetalhes() {
-            switchTab('detalhes');
-            fb.ref('posts').on('value', snap => {
-                const div = document.getElementById('lista-detalhes'); div.innerHTML = ""; let meusPosts = [];
-                snap.forEach(p => { if(p.val().uid === meuUser.id) meusPosts.push({id: p.key, val: p.val()}); });
-                meusPosts.reverse().forEach(item => { div.innerHTML += renderPost(item.id, item.val(), true); });
+            fb.ref(`seguidores/${meuUser.id}`).on('value', sp => {
+                let c = 0; sp.forEach(s => { if(s.val()===true) c++; });
+                document.getElementById('qtd-seguidores').innerText = c;
+            });
+            fb.ref(`seguindo/${meuUser.id}`).on('value', sp => {
+                let c = 0; sp.forEach(s => { if(s.val()===true) c++; });
+                document.getElementById('qtd-seguindo').innerText = c;
             });
         }
 
         function abrirModalRelacoes(tipo) {
             document.getElementById('modal-relacoes').style.display = 'flex';
-            document.getElementById('titulo-modal-relacoes').innerText = tipo === 'seguidores' ? 'Meus Seguidores' : 'Pessoas que Sigo';
-            const corpo = document.getElementById('corpo-modal-relacoes'); corpo.innerHTML = "<p style='color:#999;'>Carregando...</p>";
-            fb.ref(`${tipo}/${meuUser.id}`).once('value', snap => {
-                corpo.innerHTML = ""; let promises = []; snap.forEach(item => { if(item.val() === true) promises.push(fb.ref('usuarios/'+item.key).once('value')); });
-                if(promises.length === 0) { corpo.innerHTML = "<p style='color:#999;'>Ninguém listado.</p>"; return; }
-                Promise.all(promises).then(resultados => {
-                    resultados.forEach(uSnap => { const dados = uSnap.val();
-                        if(dados) { const foto = dados.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-                            corpo.innerHTML += `<div class="user-list-item" onclick="fecharModais(); document.getElementById('btn-voltar-busca-contexto').onclick = () => { switchTab('perfil'); }; visitarPerfil('${dados.id}')" style="cursor:pointer;"><img src="${foto}"><div><div style="font-weight:bold;">${dados.nome}</div><div style="color:#666; font-size:12px;">@${dados.id}</div></div></div>`; } });
-                });
-            });
-        }
+            document.getElementById('titulo-modal-relacoes').innerText = tipo === 'seguidores' ? 'Seguidores' : 'Seguindo';
+            const corpo = document.getElementById('corpo-modal-relacoes'); corpo.innerHTML = "";
 
-        function carregarConversas() {
-            fb.ref('conversas/'+meuUser.id).on('value', snapConversas => {
-                const boxLista = document.getElementById('lista-conversas'); boxLista.innerHTML = ""; let caminhos = [];
-                snapConversas.forEach(c => { caminhos.push(c.key); });
-                if(caminhos.length === 0) { boxLista.innerHTML = "<p style='text-align:center; margin-top:40px; color:#999;'>Nenhuma conversa.</p>"; return; }
-                caminhos.forEach(idAlvo => {
-                    fb.ref('usuarios/'+idAlvo).once('value', uSnap => {
-                        const perfilAlvo = uSnap.val() || { id: idAlvo, nome: idAlvo, foto: '' };
-                        const chatID = meuUser.id < idAlvo ? meuUser.id+"_"+idAlvo : idAlvo+"_"+meuUser.id;
-                        fb.ref('chats/'+chatID).limitToLast(1).on('value', msgSnap => {
-                            let ultimaMsgText = "Nenhuma mensagem."; let msgData = null; msgSnap.forEach(m => { msgData = m.val(); ultimaMsgText = m.val().txt; });
-                            fb.ref('chats/'+chatID).once('value', countSnap => {
-                                let naoLidas = 0; countSnap.forEach(m => { let msg = m.val(); if(msg.de === idAlvo && msg.lida !== true) naoLidas++; });
-                                let itemID = `item-chat-${idAlvo}`; let elementoExistente = document.getElementById(itemID); if(elementoExistente) elementoExistente.remove();
-                                const fotoUrl = perfilAlvo.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-                                let vistoIcon = ""; if(msgData && msgData.de === meuUser.id) vistoIcon = msgData.lida === true ? "<span class='check-icon read'>✓✓</span> " : "<span class='check-icon'>✓✓</span> ";
-                                const htmlCard = `<div id="${itemID}" class="conversa-item" onclick="abrirChat('${idAlvo}')"><img src="${fotoUrl}" style="width:50px; height:50px; border-radius:50%; object-fit:cover;"><div class="chat-info"><div class="chat-row-top"><strong>${perfilAlvo.nome}</strong></div><div class="chat-last-msg">${vistoIcon}${ultimaMsgText}</div></div>${naoLidas > 0 ? `<div class="chat-unread-badge">${naoLidas}</div>` : ''}</div>`;
-                                boxLista.innerHTML = htmlCard + boxLista.innerHTML;
-                            });
-                        });
+            fb.ref(`${tipo}/${meuUser.id}`).once('value', snap => {
+                let itens = []; snap.forEach(s => { if(s.val() === true) itens.push(s.key); });
+                if(itens.length === 0) { corpo.innerHTML = "<p style='text-align:center;color:#999;'>Nenhum registro encontrado.</p>"; return; }
+                itens.forEach(uid => {
+                    fb.ref('usuarios/'+uid).once('value', uSnap => {
+                        const u = uSnap.val();
+                        if(u) {
+                            corpo.innerHTML += `
+                            <div class="user-list-item" onclick="fecharModais(); visitarPerfil('${uid}')" style="cursor:pointer;">
+                                <img src="${u.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}">
+                                <div><b>${u.nome}</b><p style="font-size:11px;color:#777;">@${uid}</p></div>
+                            </div>`;
+                        }
                     });
                 });
             });
         }
 
-        function escutarMensagensGlobais() {
-            fb.ref('conversas/'+meuUser.id).on('value', snap => {
-                let caminhos = []; snap.forEach(c => { caminhos.push(c.key); });
-                if(caminhos.length === 0) { document.getElementById('badge-total-conversas').style.display = 'none'; return; }
-                let promises = caminhos.map(idAlvo => {
-                    const chatID = meuUser.id < idAlvo ? meuUser.id+"_"+idAlvo : idAlvo+"_"+meuUser.id;
-                    return fb.ref('chats/'+chatID).once('value').then(chatSnap => { let subCont = 0; chatSnap.forEach(m => { let msg = m.val(); if(msg.de === idAlvo && msg.lida !== true) subCont++; }); return subCont; });
+        /* CHAT INTEGRALIZADO (RESOLVIDO) */
+        function carregarConversas() {
+            const container = document.getElementById('lista-conversas');
+            container.innerHTML = `<p style="text-align:center; padding:20px; color:#aaa;">Buscando suas conversas activas...</p>`;
+            
+            fb.ref(`mensagens_recentes/${meuUser.id}`).off();
+            fb.ref(`mensagens_recentes/${meuUser.id}`).on('value', snap => {
+                container.innerHTML = "";
+                if(!snap.exists()) {
+                    container.innerHTML = `<p style="text-align:center; margin-top:40px; color:#999;">Nenhuma conversa ativa.</p>`;
+                    return;
+                }
+
+                let arrChats = [];
+                snap.forEach(child => {
+                    arrChats.push({ uid: child.key, ...child.val() });
                 });
-                Promise.all(promises).then(resultados => {
-                    let contagemTotal = Math.max(0, resultados.reduce((acc, curr) => acc + curr, 0)); const b = document.getElementById('badge-total-conversas');
-                    if(contagemTotal > 0) { b.innerText = contagemTotal; b.style.display = 'block'; } else { b.style.display = 'none'; }
+
+                arrChats.sort((a,b) => b.timestamp - a.timestamp);
+
+                arrChats.forEach(c => {
+                    fb.ref(`usuarios/${c.uid}`).once('value', uSnap => {
+                        const u = uSnap.val() || { nome: c.uid, foto: '' };
+                        container.innerHTML += `
+                            <div class="conversa-item" onclick="abrirChat('${c.uid}')">
+                                <img src="${u.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" style="width:45px;height:45px;border-radius:50%;object-fit:cover;">
+                                <div class="chat-info">
+                                    <b>${u.nome}</b>
+                                    <span class="chat-last-msg">${c.ultimaMsg || ''}</span>
+                                </div>
+                            </div>`;
+                    });
                 });
             });
         }
 
-        function abrirChat(id) {
-            chatAtivo = id; document.getElementById('janela-chat').style.display = 'flex';
-            fb.ref('usuarios/'+id).once('value', snap => { document.getElementById('chat-nome-titulo').innerText = (snap.val() && snap.val().nome) || id; });
-            const chatID = meuUser.id < id ? meuUser.id+"_"+id : id+"_"+meuUser.id;
-            fb.ref('chats/'+chatID).on('value', snap => {
+        function abrirChat(uid) {
+            chatAtivo = uid; switchTab('chat');
+            document.getElementById('janela-chat').style.display = 'flex';
+            fb.ref('usuarios/'+uid).once('value', snap => { document.getElementById('chat-nome-titulo').innerText = snap.val()?.nome || uid; });
+            
+            const sala = meuUser.id < uid ? `${meuUser.id}_${uid}` : `${uid}_${meuUser.id}`;
+            fb.ref(`chats/${sala}`).off();
+            fb.ref(`chats/${sala}`).on('value', snap => {
                 const box = document.getElementById('chat-msgs'); box.innerHTML = "";
-                snap.forEach(m => { const info = m.val(); const msgKey = m.key;
-                    if(info.de === id && info.lida !== true) fb.ref(`chats/${chatID}/${msgKey}`).update({ lida: true });
-                    let vistoHtml = ""; if(info.de === meuUser.id) vistoHtml = info.lida === true ? "<span class='check-icon read'>✓✓</span>" : "<span class='check-icon'>✓✓</span>";
-                    box.innerHTML += `<div class="m ${info.de === meuUser.id ? 'me' : 'him'}"><div>${info.txt}</div><div class="msg-meta">${vistoHtml}</div></div>`;
+                snap.forEach(m => {
+                    const msg = m.val();
+                    box.innerHTML += `<div class="m ${msg.de === meuUser.id ? 'me' : 'him'}"><span>${msg.texto}</span></div>`;
                 });
                 box.scrollTop = box.scrollHeight;
             });
         }
 
+        function fecharChat() { chatAtivo = null; document.getElementById('janela-chat').style.display = 'none'; carregarConversas(); }
+        
         function enviarMsg() {
-            const input = document.getElementById('msg-input'); if(!input.value || !chatAtivo) return;
-            const chatID = meuUser.id < chatAtivo ? meuUser.id+"_"+chatAtivo : chatAtivo+"_"+meuUser.id;
-            fb.ref('chats/'+chatID).push({ de: meuUser.id, txt: input.value, lida: false, timestamp: Date.now() });
-            fb.ref(`conversas/${meuUser.id}/${chatAtivo}`).set(true); fb.ref(`conversas/${chatAtivo}/${meuUser.id}`).set(true);
-            input.value = "";
+            const txt = document.getElementById('msg-input').value.trim(); if(!txt) return;
+            const sala = meuUser.id < chatAtivo ? `${meuUser.id}_${chatAtivo}` : `${chatAtivo}_${meuUser.id}`;
+            const agora = Date.now();
+
+            fb.ref(`chats/${sala}`).push().set({ de: meuUser.id, para: chatAtivo, texto: txt, timestamp: agora });
+            
+            fb.ref(`mensagens_recentes/${meuUser.id}/${chatAtivo}`).set({ ultimaMsg: txt, timestamp: agora });
+            fb.ref(`mensagens_recentes/${chatAtivo}/${meuUser.id}`).set({ ultimaMsg: txt, timestamp: agora });
+            
+            document.getElementById('msg-input').value = "";
         }
 
-        function convertePerfil(input, t) {
-            const file = input.files[0]; if (!file) return;
-            const r = new FileReader(); r.onload = e => { if(t==='perfil-foto') tP = e.target.result; if(t==='perfil-capa') tC = e.target.result; }; r.readAsDataURL(file);
+        /* AUXILIARES DE CONVERSÃO / POST */
+        function ajustarCamposUpload() {
+            const tipo = document.getElementById('upload-tipo').value;
+            document.getElementById('wrapper-legenda-upload').style.display = tipo === 'story' ? 'none' : 'block';
+            document.getElementById('wrapper-capa-opcional').style.display = tipo === 'story' ? 'none' : 'block';
         }
 
+        function converte(el, tipo) {
+            const arquivo = el.files[0]; if(!arquivo) return;
+            const leitor = new FileReader();
+            leitor.onloadend = function() {
+                if(tipo === 'midia') tM = leitor.result;
+                if(tipo === 'perfil-foto') tP = leitor.result;
+                if(tipo === 'perfil-capa') tC = leitor.result;
+                if(tipo === 'capa-post') tCapaPost = leitor.result;
+                if(tipo === 'capa-avulsa-post') tCapaAvulsa = leitor.result;
+            }
+            leitor.readAsDataURL(arquivo);
+        }
+
+        function enviarPublicacao() {
+            const tipo = document.getElementById('upload-tipo').value;
+            if(!tM) return alert("Escolha o arquivo primeiro!");
+            document.getElementById('btn-publicar').innerText = "COMPARTILHANDO...";
+            
+            if(tipo === 'story') {
+                fb.ref('stories').push().set({ uid: meuUser.id, media: tM, timestamp: Date.now() }).then(() => {
+                    tM = ""; fecharModais(); carregarStories();
+                    document.getElementById('btn-publicar').innerText = "COMPARTILHAR";
+                });
+            } else {
+                const legenda = document.getElementById('post-legenda').value.trim();
+                fb.ref('posts').push().set({ uid: meuUser.id, nome: meuUser.nome, legenda, media: tM, capaPost: tCapaPost, timestamp: Date.now() })
+                .then(() => { tM = ""; tCapaPost = ""; fecharModais(); switchTab('feed'); document.getElementById('btn-publicar').innerText = "COMPARTILHAR"; });
+            }
+        }
+
+        function apagar(id) { if(confirm("Deseja apagar esse post?")) { fecharModais(); fb.ref(`posts/${id}`).remove(); } }
         function salvarPerfil() {
-            const n = document.getElementById('edit-nome').value; const priv = document.getElementById('edit-privacidade').value;
-            if(n) meuUser.nome = n; if(tP) meuUser.foto = tP; if(tC) meuUser.capa = tC; meuUser.privacidade = priv;
-            fb.ref('usuarios/'+meuUser.id).update(meuUser).then(() => { localStorage.setItem('king_session', JSON.stringify(meuUser)); fecharModais(); tP = ""; tC = ""; carregarPerfil(); });
+            let updates = { nome: document.getElementById('edit-nome').value.trim(), privacidade: document.getElementById('edit-privacidade').value };
+            if(tP) updates.foto = tP; if(tC) updates.capa = tC;
+            fb.ref('usuarios/'+meuUser.id).update(updates).then(() => { fecharModais(); carregarPerfil(); });
         }
 
-        function apagar(id) { if(confirm("Apagar postagem?")) fb.ref('posts/'+id).remove().then(() => { if(document.getElementById('aba-detalhes').classList.contains('active')) verDetalhes(); }); }
-        function abrirUpload() { document.getElementById('btn-publicar').style.display = "block"; document.getElementById('btn-cancelar-post').style.display = "block"; document.getElementById('container-progresso-post').style.display = "none"; tM = ""; ajustarCamposUpload(); document.getElementById('modal-post').style.display='flex'; }
-        function abrirEdit() { document.getElementById('edit-nome').value = meuUser.nome || ""; document.getElementById('edit-privacidade').value = meuUser.privacidade || "publica"; document.getElementById('modal-edit').style.display='flex'; }
-        function abrirConfig() { document.getElementById('modal-config').style.display='flex'; }
-        function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
-        function fecharChat() { document.getElementById('janela-chat').style.display = 'none'; chatAtivo = null; carregarConversas(); }
-
-        window.onload = () => { if(meuUser) logar(meuUser); };
+        function abrirUpload() { document.getElementById('modal-post').style.display = 'flex'; tM = ""; tCapaPost = ""; ajustarCamposUpload(); }
+        function abrirConfig() { document.getElementById('modal-config').style.display = 'flex'; }
+        function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+        function abrirEdit() { document.getElementById('modal-edit').style.display = 'flex'; document.getElementById('edit-nome').value = meuUser.nome; }
     </script>
 </body>
 </html>
