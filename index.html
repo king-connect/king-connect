@@ -878,6 +878,390 @@
         function abrirConfig() { document.getElementById('modal-config').style.display = 'flex'; }
         function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
         function abrirEdit() { document.getElementById('modal-edit').style.display = 'flex'; document.getElementById('edit-nome').value = meuUser.nome; }
-    </script>
+    
+        // =========================================================================
+        // CÓDIGO INJETADO: GERENCIADOR DE ANÚNCIOS AVANÇADO (AD MANAGER)
+        // =========================================================================
+        let fluxoSelecionadoAd = "novo", idPostParaTurbinarAd = "", tMidiaAd = "";
+
+        // Injetar dinamicamente o botão do Ad Manager no sidebar com ícone totalmente branco
+        document.addEventListener("DOMContentLoaded", () => {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) {
+                const btnAd = document.createElement('div');
+                btnAd.className = 'nav-btn';
+                btnAd.id = 'btn-admanager';
+                btnAd.setAttribute('onclick', "switchTab('admanager')");
+                btnAd.innerHTML = `<img src="https://img.icons8.com/ios-filled/50/ffffff/advertising.png" style="width:24px; display:block; margin:0 auto 5px; filter:none;">Ad Manager`;
+                // Inserir antes do perfil
+                const btnPerfil = document.getElementById('btn-perfil');
+                if (btnPerfil) {
+                    sidebar.insertBefore(btnAd, btnPerfil);
+                } else {
+                    sidebar.appendChild(btnAd);
+                }
+            }
+
+            // Criar a aba-admanager dinamicamente no main container
+            const mainContainer = document.querySelector('.main');
+            if (mainContainer && !document.getElementById('aba-admanager')) {
+                const novaAba = document.createElement('div');
+                novaAba.id = 'aba-admanager';
+                novaAba.className = 'aba content';
+                novaAba.style.background = '#f4f6f9';
+                novaAba.style.padding = '0';
+                novaAba.style.display = 'none';
+                mainContainer.appendChild(novaAba);
+            }
+        });
+
+        // Estender a função switchTab original para interceptar quando clicar em 'admanager'
+        const originalSwitchTab = switchTab;
+        switchTab = function(t) {
+            originalSwitchTab(t);
+            
+            // Garantir que a aba seja exibida e as outras sumam substituindo o conteúdo anterior
+            if(t === 'admanager') {
+                document.querySelectorAll('.aba').forEach(a => a.style.display = 'none');
+                const abaAd = document.getElementById('aba-admanager');
+                if(abaAd) {
+                    abaAd.style.display = 'block';
+                    abaAd.classList.add('active');
+                }
+                
+                // Mudar cabeçalho superior para estilo profissional
+                const headerEl = document.querySelector('header b');
+                if(headerEl) headerEl.innerText = "META ADS MANAGER";
+                
+                // Esconder o FAB de posts padrão do feed enquanto estiver no Ad Manager
+                const fabUpload = document.getElementById('main-fab-upload') || document.querySelector('.fab');
+                if(fabUpload) fabUpload.style.display = 'none';
+
+                verificarEConfigurarEstruturaAdManager();
+            } else {
+                const abaAd = document.getElementById('aba-admanager');
+                if(abaAd) {
+                    abaAd.style.display = 'none';
+                    abaAd.classList.remove('active');
+                }
+                const headerEl = document.querySelector('header b');
+                if(headerEl) headerEl.innerText = "KINGCONNECT";
+                
+                const fabUpload = document.getElementById('main-fab-upload') || document.querySelector('.fab');
+                if(fabUpload) fabUpload.style.display = 'flex';
+            }
+        };
+
+        function verificarEConfigurarEstruturaAdManager() {
+            const container = document.getElementById('aba-admanager');
+            if (!container) return;
+
+            fb.ref(`ad_accounts/${meuUser.id}`).once('value', snap => {
+                if(!snap.exists()) {
+                    // Caso não tenha conta profissional criada (Pede para criar)
+                    container.innerHTML = `
+                        <div style="padding:25px; background:#fff; height:100%; overflow-y:auto; font-family:'Inter',sans-serif; color:#1c1e21; box-sizing:border-box;">
+                            <h3 style="font-size:22px; margin-bottom:10px; font-weight:700;">Criar Conta de Anúncios Profissional</h3>
+                            <p style="font-size:13px; color:#65676b; margin-bottom:20px; line-height:1.5;">Forneça os detalhes do seu negócio ou segmento de prestação de serviços antes de acessar o painel do Ads Manager corporativo.</p>
+                            
+                            <label style="font-size:12px; font-weight:bold; color:#4b4f56; display:block; margin-top:12px;">Nome Comercial da Conta / Empresa:</label>
+                            <input type="text" id="ad-reg-empresa" placeholder="Ex: King Digital Ltda" style="width:100%; padding:12px; margin:6px 0; border:1px solid #ddd; border-radius:6px; font-size:13px; color:#000; background:#fff; box-sizing:border-box;">
+
+                            <label style="font-size:12px; font-weight:bold; color:#4b4f56; display:block; margin-top:12px;">Nicho / Serviços Prestados:</label>
+                            <input type="text" id="ad-reg-servico" placeholder="Ex: Dropshipping, Infoprodutos, Estética, Delivery, Advocacia" style="width:100%; padding:12px; margin:6px 0; border:1px solid #ddd; border-radius:6px; font-size:13px; color:#000; background:#fff; box-sizing:border-box;">
+
+                            <label style="font-size:12px; font-weight:bold; color:#4b4f56; display:block; margin-top:12px;">Site Oficial ou Link Comercial:</label>
+                            <input type="text" id="ad-reg-site" placeholder="https://instagram.com/seucomercio" style="width:100%; padding:12px; margin:6px 0; border:1px solid #ddd; border-radius:6px; font-size:13px; color:#000; background:#fff; box-sizing:border-box;">
+
+                            <label style="font-size:12px; font-weight:bold; color:#4b4f56; display:block; margin-top:12px;">Moeda de Faturamento:</label>
+                            <select id="ad-reg-moeda" style="width:100%; padding:12px; margin:6px 0; border:1px solid #ddd; border-radius:6px; background:#fff; font-size:13px; color:#000; box-sizing:border-box;"><option value="BRL">Real Brasileiro (BRL)</option></select>
+
+                            <button onclick="salvarContaAdManagerCorporativa()" style="background:#1877f2; color:#fff; border:none; padding:14px; width:100%; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:20px; font-size:14px; text-transform:uppercase; letter-spacing:0.5px;">CONCLUIR CRIAÇÃO E CONFIGURAÇÃO</button>
+                        </div>
+                    `;
+                } else {
+                    // Se já tiver criado a conta, abre substituindo com as sub-abas superiores: Pagamentos/Config, Campanhas e Histórico
+                    const dad = snap.val();
+                    container.innerHTML = `
+                        <div style="display:flex; flex-direction:column; height:100%; background:#f4f6f9; font-family:'Inter',sans-serif; box-sizing:border-box;">
+                            <!-- Abas superiores substituindo outras abas e colocando pagamentos, campanhas, histórico -->
+                            <div style="background:#fff; border-bottom:1px solid #ddd; display:flex; padding:0 10px; flex-shrink:0;">
+                                <div style="padding:15px 20px; font-size:13px; font-weight:bold; color:#1877f2; cursor:pointer; border-bottom:3px solid #1877f2;" id="ad-subtab-campanhas" onclick="alternarSubAbasMeta('campanhas')">Campanhas & Histórico</div>
+                                <div style="padding:15px 20px; font-size:13px; font-weight:bold; color:#65676b; cursor:pointer; border-bottom:3px solid transparent;" id="ad-subtab-criar" onclick="alternarSubAbasMeta('criar')">Nova Campanha / Turbinar</div>
+                                <div style="padding:15px 20px; font-size:13px; font-weight:bold; color:#65676b; cursor:pointer; border-bottom:3px solid transparent;" id="ad-subtab-config" onclick="alternarSubAbasMeta('config')">Pagamentos & Empresa</div>
+                            </div>
+
+                            <!-- SUB-ABA 1: CAMPANHAS & HISTÓRICO -->
+                            <div id="pane-meta-campanhas" style="flex:1; overflow-y:auto; padding:20px; display:block; box-sizing:border-box;">
+                                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:15px; margin-bottom:20px;">
+                                    <div style="background:#fff; padding:15px; border-radius:8px; border:1px solid #ddd;">
+                                        <h4 style="font-size:11px; color:#65676b; text-transform:uppercase; margin-bottom:5px; margin-top:0;">Gasto Livre Utilizado</h4>
+                                        <div style="font-size:18px; font-weight:bold; color:#1c1e21;" id="ad-card-gasto">R$ 0,00</div>
+                                    </div>
+                                    <div style="background:#fff; padding:15px; border-radius:8px; border:1px solid #ddd;">
+                                        <h4 style="font-size:11px; color:#65676b; text-transform:uppercase; margin-bottom:5px; margin-top:0;">Impressões</h4>
+                                        <div style="font-size:18px; font-weight:bold; color:#1c1e21;" id="ad-card-imp">0</div>
+                                    </div>
+                                    <div style="background:#fff; padding:15px; border-radius:8px; border:1px solid #ddd;">
+                                        <h4 style="font-size:11px; color:#65676b; text-transform:uppercase; margin-bottom:5px; margin-top:0;">Cliques Totais</h4>
+                                        <div style="font-size:18px; font-weight:bold; color:#1c1e21;" id="ad-card-cli">0</div>
+                                    </div>
+                                </div>
+
+                                <div style="overflow-x:auto; background:#fff; border:1px solid #ddd; border-radius:8px;">
+                                    <table style="width:100%; border-collapse:collapse; min-width:600px;">
+                                        <thead>
+                                            <tr style="background:#f5f6f7; color:#4b4f56; font-size:12px; text-align:left; border-bottom:1px solid #ddd;">
+                                                <th style="padding:12px;">Campanha</th>
+                                                <th style="padding:12px;">Tipo / Veiculação</th>
+                                                <th style="padding:12px;">Objetivo</th>
+                                                <th style="padding:12px;">Orçamento Livre</th>
+                                                <th style="padding:12px;">Público Alvo</th>
+                                                <th style="padding:12px;">Impressões</th>
+                                                <th style="padding:12px;">Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="lista-campanhas-corpo-tabela" style="font-size:13px; color:#1c1e21;">
+                                            <tr><td colspan="7" style="text-align:center; padding:20px; color:#999;">Carregando dados da Meta Ads API...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- SUB-ABA 2: CRIAR CAMPANHA OU TURBINAR -->
+                            <div id="pane-meta-criar" style="flex:1; overflow-y:auto; padding:20px; display:none; box-sizing:border-box;">
+                                <div style="max-width:600px; background:#fff; padding:20px; border-radius:8px; border:1px solid #ddd; margin:0 auto; box-sizing:border-box;">
+                                    <h3 style="margin-bottom:15px; font-size:16px; font-weight:bold; margin-top:0;">Configurar Patrocínio Comercial</h3>
+                                    
+                                    <label style="font-size:11px; font-weight:bold; color:#4b4f56;">Escolha a modalidade de veiculação:</label>
+                                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:8px 0 15px 0;">
+                                        <div id="fl-op-novo" onclick="ajustarFluxoInternoAd('novo')" style="border:2px solid #1877f2; padding:12px; border-radius:8px; text-align:center; cursor:pointer; font-weight:bold; background:#f0f7ff; color:#1877f2; font-size:13px;">Aparecer para pessoas específicas</div>
+                                        <div id="fl-op-turbinar" onclick="ajustarFluxoInternoAd('turbinar')" style="border:2px solid #ddd; padding:12px; border-radius:8px; text-align:center; cursor:pointer; font-weight:bold; background:#fff; color:#333; font-size:13px;">Turbinar (Patrocinar deixando aparecer toda hora pras pessoas)</div>
+                                    </div>
+
+                                    <div id="box-ad-selecionar-post" style="display:none; border:1px solid #ddd; padding:15px; border-radius:6px; margin-bottom:15px; background:#fafafa; box-sizing:border-box;">
+                                        <h4 style="font-size:12px; margin-bottom:8px; margin-top:0;">Selecione um post publicado para patrocinar:</h4>
+                                        <div id="grid-ad-posts-disponiveis" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; max-height:140px; overflow-y:auto; padding:4px; border:1px solid #eee; background:#fff;"></div>
+                                    </div>
+
+                                    <div style="border:1px solid #eee; padding:12px; border-radius:6px; margin-bottom:12px; box-sizing:border-box;">
+                                        <label style="font-size:11px; font-weight:bold; display:block; margin-top:5px;">Nome Identificador da Campanha:</label>
+                                        <input type="text" id="ad-nome-camp" placeholder="Ex: Campanha Tráfego Pago - Junho" style="width:100%; padding:10px; margin:6px 0; border:1px solid #ddd; border-radius:6px; background:#fff; color:#000;">
+                                        
+                                        <label style="font-size:11px; font-weight:bold; display:block; margin-top:5px;">Orçamento Diário Livre (R$):</label>
+                                        <input type="number" id="ad-orcamento-camp" placeholder="Ex: 50.00" min="5" style="width:100%; padding:10px; margin:6px 0; border:1px solid #ddd; border-radius:6px; background:#fff; color:#000;">
+                                    </div>
+
+                                    <div style="border:1px solid #eee; padding:12px; border-radius:6px; margin-bottom:12px; box-sizing:border-box;">
+                                        <h4 style="font-size:12px; margin-bottom:5px; color:#111; margin-top:0;">Direcionamento Avançado</h4>
+                                        <label style="font-size:11px; font-weight:bold; display:block; margin-top:5px;">Localização Geográfica Alvo:</label>
+                                        <input type="text" id="ad-geo-camp" placeholder="Ex: Rio de Janeiro, Brasil" style="width:100%; padding:10px; margin:6px 0; border:1px solid #ddd; border-radius:6px; background:#fff; color:#000;">
+                                        
+                                        <label style="font-size:11px; font-weight:bold; display:block; margin-top:5px;">Faixa Etária / Idades:</label>
+                                        <input type="text" id="ad-idade-camp" placeholder="Ex: 18 a 50 anos" style="width:100%; padding:10px; margin:6px 0; border:1px solid #ddd; border-radius:6px; background:#fff; color:#000;">
+                                        
+                                        <label style="font-size:11px; font-weight:bold; display:block; margin-top:5px;">Interesses Meta Ads:</label>
+                                        <input type="text" id="ad-interesses-camp" placeholder="Ex: Compras, Marketing, Dropshipping" style="width:100%; padding:10px; margin:6px 0; border:1px solid #ddd; border-radius:6px; background:#fff; color:#000;">
+                                    </div>
+
+                                    <div id="box-ad-upload-manual" style="border:1px solid #eee; padding:12px; border-radius:6px; margin-bottom:12px; box-sizing:border-box;">
+                                        <label style="font-size:11px; font-weight:bold; display:block; margin-top:5px;">Mídia do Criativo (Carregar Imagem/Vídeo):</label>
+                                        <input type="file" accept="image/*,video/*" onchange="converteMidiaAvulsaAd(this)" style="width:100%; padding:10px; margin:6px 0; border:1px solid #ddd; border-radius:6px; background:#fff; color:#000;">
+                                        
+                                        <label style="font-size:11px; font-weight:bold; display:block; margin-top:5px;">URL de Destino (Link do Site / WhatsApp):</label>
+                                        <input type="text" id="ad-url-camp" placeholder="https://seusite.com/vendas" style="width:100%; padding:10px; margin:6px 0; border:1px solid #ddd; border-radius:6px; background:#fff; color:#000;">
+                                    </div>
+
+                                    <button onclick="publicarCampanhaOficialSemPix()" style="width:100%; padding:14px; background:#1877f2; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:14px; text-transform:uppercase;">ATIVAR E PUBLICAR CAMPANHA</button>
+                                </div>
+                            </div>
+
+                            <!-- SUB-ABA 3: PAGAMENTOS E CONFIGURAÇÕES DA EMPRESA -->
+                            <div id="pane-meta-config" style="flex:1; overflow-y:auto; padding:20px; display:none; box-sizing:border-box;">
+                                <div style="max-width:600px; background:#fff; padding:20px; border-radius:8px; border:1px solid #ddd; margin:0 auto; box-sizing:border-box;">
+                                    <h3 style="margin-bottom:12px; font-size:16px; font-weight:bold; margin-top:0;">Perfil da Conta de Anúncios & Pagamentos</h3>
+                                    <div style="font-size:13px; line-height:1.6; color:#333; background:#fafafa; padding:15px; border-radius:6px; border:1px solid #eee; box-sizing:border-box;">
+                                        <strong>Empresa Cadastrada:</strong> ${dad.empresa}<br>
+                                        <strong>Segmento / Serviços:</strong> ${dad.servico}<br>
+                                        <strong>Site / Link Comercial:</strong> ${dad.site || 'Nenhum site informado'}<br>
+                                        <strong>Faturamento da Conta:</strong> Livre / Sem cobrança compulsória por PIX (Modo Teste Ativo)<br>
+                                        <strong>Status Corporativo:</strong> Conta Verificada e Regularizada
+                                    </div>
+                                    <hr style="margin:20px 0; border:none; border-top:1px solid #ddd;">
+                                    <button onclick="excluirConfiguracaoAdManagerCompleta()" style="background:#f02849; color:#fff; border:none; padding:10px 15px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:12px;">Excluir e Resetar Conta Corporativa</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    listarCampanhasDoUsuarioFirebase();
+                }
+            });
+        }
+
+        function salvarContaAdManagerCorporativa() {
+            const empresa = document.getElementById('ad-reg-empresa').value.trim();
+            const servico = document.getElementById('ad-reg-servico').value.trim();
+            const site = document.getElementById('ad-reg-site').value.trim();
+            if(!empresa || !servico) return alert("Por favor, preencha o nome da sua Empresa e o Nicho de Serviços prestados!");
+            
+            fb.ref(`ad_accounts/${meuUser.id}`).set({
+                empresa, servico, site, timestamp: Date.now()
+            }).then(() => {
+                verificarEConfigurarEstruturaAdManager();
+            });
+        }
+
+        function alternarSubAbasMeta(sub) {
+            document.getElementById('pane-meta-campanhas').style.display = sub === 'campanhas' ? 'block' : 'none';
+            document.getElementById('pane-meta-criar').style.display = sub === 'criar' ? 'block' : 'none';
+            document.getElementById('pane-meta-config').style.display = sub === 'config' ? 'block' : 'none';
+
+            document.getElementById('ad-subtab-campanhas').style.color = sub === 'campanhas' ? '#1877f2' : '#65676b';
+            document.getElementById('ad-subtab-campanhas').style.borderBottomColor = sub === 'campanhas' ? '#1877f2' : 'transparent';
+            document.getElementById('ad-subtab-criar').style.color = sub === 'criar' ? '#1877f2' : '#65676b';
+            document.getElementById('ad-subtab-criar').style.borderBottomColor = sub === 'criar' ? '#1877f2' : 'transparent';
+            document.getElementById('ad-subtab-config').style.color = sub === 'config' ? '#1877f2' : '#65676b';
+            document.getElementById('ad-subtab-config').style.borderBottomColor = sub === 'config' ? '#1877f2' : 'transparent';
+
+            if(sub === 'campanhas') listarCampanhasDoUsuarioFirebase();
+        }
+
+        function ajustarFluxoInternoAd(tipo) {
+            fluxoSelecionadoAd = tipo;
+            const opNovo = document.getElementById('fl-op-novo');
+            const opTurbinar = document.getElementById('fl-op-turbinar');
+
+            if(tipo === 'novo') {
+                opNovo.style.background = '#f0f7ff'; opNovo.style.color = '#1877f2'; opNovo.style.borderColor = '#1877f2';
+                opTurbinar.style.background = '#fff'; opTurbinar.style.color = '#333'; opTurbinar.style.borderColor = '#ddd';
+                document.getElementById('box-ad-selecionar-post').style.display = 'none';
+                document.getElementById('box-ad-upload-manual').style.display = 'block';
+            } else {
+                opTurbinar.style.background = '#f0f7ff'; opTurbinar.style.color = '#1877f2'; opTurbinar.style.borderColor = '#1877f2';
+                opNovo.style.background = '#fff'; opNovo.style.color = '#333'; opNovo.style.borderColor = '#ddd';
+                document.getElementById('box-ad-selecionar-post').style.display = 'block';
+                document.getElementById('box-ad-upload-manual').style.display = 'none';
+                renderizarPostsDoUsuarioParaSelecaoAd();
+            }
+        }
+
+        function renderizarPostsDoUsuarioParaSelecaoAd() {
+            const grid = document.getElementById('grid-ad-posts-disponiveis');
+            if(!grid) return;
+            grid.innerHTML = "";
+
+            fb.ref('posts').once('value', snap => {
+                let achou = false;
+                snap.forEach(p => {
+                    const post = p.val();
+                    if(post && post.uid === meuUser.id && post.media) {
+                        achou = true;
+                        const wrapper = document.createElement('div');
+                        wrapper.style = "aspect-ratio:1/1; cursor:pointer; overflow:hidden; border:2px solid transparent; background:#000; box-sizing:border-box;";
+                        wrapper.innerHTML = `<img src="${post.media}" style="width:100%; height:100%; object-fit:cover;">`;
+                        wrapper.onclick = () => {
+                            document.querySelectorAll('#grid-ad-posts-disponiveis div').forEach(d => d.style.borderColor = 'transparent');
+                            wrapper.style.borderColor = '#1877f2';
+                            idPostParaTurbinarAd = p.key;
+                            tMidiaAd = post.media;
+                        };
+                        grid.appendChild(wrapper);
+                    }
+                });
+                if(!achou) grid.innerHTML = `<p style="grid-column:span 4; font-size:11px; color:#aaa; text-align:center; padding:10px;">Nenhum post no seu perfil para turbinar.</p>`;
+            });
+        }
+
+        function converteMidiaAvulsaAd(el) {
+            const arquivo = el.files[0]; if(!arquivo) return;
+            const leitor = new FileReader();
+            leitor.onloadend = function() { tMidiaAd = leitor.result; };
+            leitor.readAsDataURL(arquivo);
+        }
+
+        function publicarCampanhaOficialSemPix() {
+            const nome = document.getElementById('ad-nome-camp').value.trim();
+            const orcamento = parseFloat(document.getElementById('ad-orcamento-camp').value) || 0;
+            const geo = document.getElementById('ad-geo-camp').value.trim();
+            const idade = document.getElementById('ad-idade-camp').value.trim();
+
+            if(!nome || orcamento < 5 || !geo || !idade) return alert("Por favor preencha o nome identificador, direcionamento completo e orçamento mínimo diário de R$ 5,00!");
+            if(fluxoSelecionadoAd === 'turbinar' && !idPostParaTurbinarAd) return alert("Por favor selecione qual publicação publicada você deseja turbinar!");
+
+            fb.ref(`ads/${meuUser.id}`).push().set({
+                nome: nome,
+                tipo: fluxoSelecionadoAd === 'novo' ? 'Pessoas Específicas' : 'Patrocinado Geral (Aparecer Toda Hora)',
+                objetivo: fluxoSelecionadoAd === 'novo' ? 'Tráfego Focado' : 'Visualizações em Massa',
+                orcamento: orcamento,
+                geo: geo,
+                idade: idade,
+                interesses: document.getElementById('ad-interesses-camp').value || 'Geral',
+                media: tMidiaAd || '',
+                impressoes: Math.floor(Math.random() * 200) + 25, 
+                cliques: Math.floor(Math.random() * 12) + 1,
+                gasto: (Math.random() * 5).toFixed(2)
+            }).then(() => {
+                alert("Campanha em veiculação automática! Nenhuma cobrança por PIX é exigida por enquanto.");
+                tMidiaAd = ""; idPostParaTurbinarAd = "";
+                alternarSubAbasMeta('campanhas');
+            });
+        }
+
+        function listarCampanhasDoUsuarioFirebase() {
+            fb.ref(`ads/${meuUser.id}`).on('value', snap => {
+                const tbody = document.getElementById('lista-campanhas-corpo-tabela');
+                if(!tbody) return;
+                tbody.innerHTML = "";
+
+                let gastoTotal = 0, impTotais = 0, cliTotais = 0;
+
+                if(!snap.exists()) {
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:#888;">Nenhuma campanha em execução ou histórico registrado no Ad Manager.</td></tr>`;
+                    document.getElementById('ad-card-gasto').innerText = "R$ 0,00";
+                    document.getElementById('ad-card-imp').innerText = "0";
+                    document.getElementById('ad-card-cli').innerText = "0";
+                    return;
+                }
+
+                snap.forEach(child => {
+                    const ad = child.val();
+                    gastoTotal += parseFloat(ad.gasto || 0);
+                    impTotais += parseInt(ad.impressoes || 0);
+                    cliTotais += parseInt(ad.cliques || 0);
+
+                    tbody.innerHTML += `
+                        <tr style="border-bottom:1px solid #eee;">
+                            <td style="padding:12px;"><strong>${ad.nome}</strong></td>
+                            <td style="padding:12px;"><span style="color:#1877f2; font-weight:bold; font-size:11px;">${ad.tipo}</span></td>
+                            <td style="padding:12px; color:#555;">${ad.objetivo}</td>
+                            <td style="padding:12px; font-weight:bold;">R$ ${parseFloat(ad.orcamento).toFixed(2)}</td>
+                            <td style="padding:12px; font-size:11px; color:#666;">${ad.geo} (${ad.idade})</td>
+                            <td style="padding:12px; font-weight:bold; color:#333;">${ad.impressoes}</td>
+                            <td style="padding:12px;"><button onclick="deletarCampanhaMetaAdsDoBanco('${child.key}')" style="background:#f02849; color:#fff; border:none; padding:5px 10px; border-radius:4px; font-weight:bold; font-size:11px; cursor:pointer;">Excluir</button></td>
+                        </tr>
+                    `;
+                });
+
+                document.getElementById('ad-card-gasto').innerText = `R$ ${gastoTotal.toFixed(2)}`;
+                document.getElementById('ad-card-imp').innerText = impTotais;
+                document.getElementById('ad-card-cli').innerText = cliTotais;
+            });
+        }
+
+        function deletarCampanhaMetaAdsDoBanco(key) {
+            if(confirm("Deseja deletar e excluir permanentemente esta campanha do histórico de anúncios?")) {
+                fb.ref(`ads/${meuUser.id}/${key}`).remove();
+            }
+        }
+
+        function excluirConfiguracaoAdManagerCompleta() {
+            if(confirm("Deseja apagar sua conta corporativa de anúncios e deletar permanentemente todas as campanhas criadas?")) {
+                fb.ref(`ad_accounts/${meuUser.id}`).remove();
+                fb.ref(`ads/${meuUser.id}`).remove().then(() => {
+                    verificarEConfigurarEstruturaAdManager();
+                });
+            }
+        }
+</script>
 </body>
 </html>
